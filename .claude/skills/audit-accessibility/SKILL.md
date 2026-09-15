@@ -167,7 +167,7 @@ and `@storybook/addon-a11y` are gone, so say where the assertion would live.
 - A part rendered through `ark.*` or an `@ark-ui/vue/<component>` part inherits
   Ark's machine. A bare element in the same directory does not. That boundary
   is where the real findings sit.
-- Boundary against the sibling skill: `review-registry-primitive` is the broad
+- Boundary against the sibling skill: `review-component` is the broad
   senior review that touches accessibility among five other axes. This skill is
   accessibility only, in depth.
 - Reference: WCAG 2.2 (https://www.w3.org/TR/WCAG22/), APG patterns
