@@ -363,10 +363,11 @@ Verify each of these against the target (section 0) before using it.
 - Vue utilities: `@vueuse/core` (e.g. `reactiveOmit`)
 - Class name merging: `import { cn } from 'cn'` — the npm package, not a
   local `lib/utils` re-export
-- Composables: `@/composables/useForwardPropsEmits`,
-  `@/composables/useForwardProps`, `@/composables/useForwardExpose`,
-  `@/composables/createContext`
-- Dynamic/asChild: `import { Dynamic } from '@/composables/dynamic'`
+- Composables (`use*` only): `@/composables/useForwardPropsEmits`,
+  `@/composables/useForwardProps`, `@/composables/useForwardExpose`
+- Helpers: `@/lib/createContext`. Pure factories and functions live in
+  `src/lib/`, not `src/composables/` — see the `create-composable` skill
+- Dynamic/asChild: `import { Dynamic } from '@/lib/dynamic'`
 - Styles: `./styles`
 - **Icons: `@/components/ui/icons` only.** No component imports an icon
   package directly, ever. The icons module is one file of named re-exports

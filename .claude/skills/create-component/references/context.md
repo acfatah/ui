@@ -18,7 +18,7 @@ Create a `context.ts` when:
 ```ts
 import type { ComputedRef } from 'vue'
 
-import { createContext } from '@/composables/createContext'
+import { createContext } from '@/lib/createContext'
 
 export interface TooltipOptions {
   hideArrow?: boolean
