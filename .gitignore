@@ -29,3 +29,7 @@ logs
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# vitest browser-mode failure captures
+__screenshots__
+.vitest-attachments
