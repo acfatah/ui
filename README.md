@@ -15,8 +15,9 @@ one reaches parity. Nothing here is installable, and the commands below
 describe the intended interface, not a shipped one.
 
 What exists today is the conventions layer carried over from the previous
-repository: the agent skills in `.claude/skills/` and the context
-documents in `docs/`.
+repository — the agent skills in `.claude/skills/` — plus the workspace
+scaffold under `packages/registry/`, which has the configuration and the
+Tailwind token layer a component needs but no components in it.
 
 ## Requirements
 
@@ -61,10 +62,13 @@ The only CLI in this repo builds `registry.json` from the colocated
 management and state. This repository owns styling and API surface only.
 
 **Styles live in framework-free TypeScript.** Tailwind class strings are
-not inlined in templates. They sit in plain `.ts` files that a component
-imports, using `tailwind-variants` where a component has variants or
-multiple parts. This keeps styles greppable and diffable, and is the
-whole reason a port to another framework would ever be tractable.
+not inlined in templates. They sit in a plain `styles.ts` that a
+component imports, one export per part. There is no variant library —
+no `cva`, no `tailwind-variants`; `cn` does all composition, defaults
+come from `withDefaults` in the SFC, and variant types derive from the
+styles object with `keyof typeof`. This keeps styles greppable and
+diffable, and is the whole reason a port to another framework would ever
+be tractable.
 
 **Vue only.** The repository name is framework-neutral so a port stays
 possible, but no port is planned and none should be assumed.
@@ -90,17 +94,24 @@ browser-mode tests driven by Playwright.
 
 ## Repository layout
 
-Planned. Nothing but `docs/` and `.claude/` exists yet.
+Partly built. Entries marked *planned* do not exist yet.
 
 ```
 apps/
-  docs/            Astro documentation site, also the component sandbox
+  docs/            planned  Astro documentation site, also the sandbox
 packages/
-  registry/        Component source, one directory per component
-docs/              Context documents, decisions, conventions
-.claude/skills/    Authoring and review skills for agents
-registry.json      Consumer entry point, at the repository root
+  registry/                 Component source, one directory per component
+    src/components/ui/      One directory per component
+    src/composables/        use* modules only
+    src/lib/                Pure functions and factories
+    src/styles/global.css   Tailwind v4 entry and shared token layer
+docs/              planned  Context documents, decisions, conventions
+.claude/skills/             Authoring and review skills for agents
+registry.json      planned  Consumer entry point, at the repository root
 ```
+
+`registry.json` is generated from the colocated `_registry.ts` files by
+the build CLI, which is also still to be written.
 
 ## Relationship to shadcn-vue-ark
 
