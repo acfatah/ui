@@ -18,8 +18,8 @@ it knows what the house style is.
 
 1. **Target directory and component name** come from the arguments
    (`[target-dir] [ComponentName]`). If either is missing, ask. Do not
-   guess, and do not assume `packages/registry` — that path belongs to one
-   specific repository.
+   guess, and do not assume `packages/registry` or `packages/vue` —
+   each path belongs to one specific repository.
 2. **Discover what the target actually provides** before grading anything:
 
    ```bash
@@ -153,6 +153,10 @@ Each is a question against the target, not an assertion about it.
      `withDefaults` rather than a `defaults` key, compound rules as an
      explicit `computed` appended to the `cn(...)` call. There is no
      `compoundVariants` key — if you find one, nothing reads it: 🟧.
+   - Target keeps styles in a shared package (`acfatah/ui`:
+     `packages/styles`): the component's own `styles.ts` must be a pure
+     re-export with no class strings in it. Class strings written into
+     the re-export never reach consumers, who receive the shared file: 🟥.
    - Target uses `variant.ts` / `cva`: check the cva usage is correct and
      leave the choice alone.
 8. **Icons.** If the target has an icons module, no component imports an

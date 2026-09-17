@@ -9,13 +9,27 @@
         "typescript": "~6.0.3",
       },
     },
-    "packages/registry": {
-      "name": "packages.registry",
+    "packages/styles": {
+      "name": "packages.styles",
+      "version": "0.0.0",
+      "dependencies": {
+        "tailwindcss": "^4.3.3",
+      },
+      "devDependencies": {
+        "@acfatah/eslint-preset": "^5.0.0",
+        "eslint": "^10.7.0",
+        "eslint-plugin-format": "^2.0.1",
+        "typescript": "~6.0.3",
+      },
+    },
+    "packages/vue": {
+      "name": "packages.vue",
       "version": "0.0.0",
       "dependencies": {
         "@ark-ui/vue": "^5.37.2",
         "@vueuse/core": "^14.3.0",
         "cn": "0.3.0",
+        "packages.styles": "workspace:*",
         "tailwindcss": "^4.3.3",
         "vue": "^3.5.40",
       },
@@ -1296,7 +1310,9 @@
 
     "package-manager-detector": ["package-manager-detector@1.8.0", "", {}, "sha512-yQA4H19AmPEoMUeavPMDIe1higySl/gH/yaQrkT/s07Qp+7pp2hYz30N3z2l5BkjVkF9Ow6o0wjJamm2y7Sn0A=="],
 
-    "packages.registry": ["packages.registry@workspace:packages/registry"],
+    "packages.styles": ["packages.styles@workspace:packages/styles"],
+
+    "packages.vue": ["packages.vue@workspace:packages/vue"],
 
     "parent-module": ["parent-module@1.0.1", "", { "dependencies": { "callsites": "^3.0.0" } }, "sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g=="],
 

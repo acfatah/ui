@@ -16,8 +16,8 @@ This skill is repo-agnostic. It reports nothing until it knows what it read.
 
 1. **Target directory and component** come from the arguments
    (`[target-dir] [ComponentNameOrPath]`). If either is missing, ask. Do not
-   guess, and do not assume `packages/registry` — that path belongs to one
-   specific repository.
+   guess, and do not assume `packages/registry` or `packages/vue` —
+   each path belongs to one specific repository.
 2. **Discover what the target actually provides** before reading imports.
    A component is two files at minimum, and the evidence is split across
    them:

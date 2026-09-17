@@ -9,9 +9,9 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "cd packages/registry && bun run lint",
-    "format": "cd packages/registry && bun run format",
-    "typecheck": "cd packages/registry && bun run typecheck"
+    "lint": "bun run --filter './packages/*' lint",
+    "format": "bun run --filter './packages/*' format",
+    "typecheck": "bun run --filter './packages/*' typecheck"
   },
   "devDependencies": {
     "@types/bun": "^1.3.14",

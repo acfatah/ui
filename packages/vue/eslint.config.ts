@@ -32,7 +32,7 @@ export default defineConfig(
       // object values hold Tailwind classes, so `buttonStyles.variant` and
       // `buttonStyles.size` are linted like any `class` attribute.
       'better-tailwindcss': {
-        entryPoint: 'src/styles/global.css',
+        entryPoint: '../styles/src/global.css',
         variables: [
           ['variant', [{ match: 'objectValues' }]],
           ['size', [{ match: 'objectValues' }]],
@@ -55,7 +55,7 @@ export default defineConfig(
   //   3. alias    - `@/` value imports
   //   4. relative - `./` and `../` value imports
   {
-    name: 'registry/vue-import-groups',
+    name: 'vue/import-groups',
     files: ['**/*.vue'],
     rules: {
       'perfectionist/sort-imports': ['error', {

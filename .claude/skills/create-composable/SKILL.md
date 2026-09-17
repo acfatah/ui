@@ -17,8 +17,8 @@ This skill is repo-agnostic. It writes nothing until it knows where.
 
 1. **Target directory and module name** come from the arguments
    (`[target-dir] [moduleName]`). If either is missing, ask. Do not guess,
-   and do not assume `packages/registry` — that path belongs to one
-   specific repository.
+   and do not assume `packages/registry` or `packages/vue` —
+   each path belongs to one specific repository.
 2. **Discover what the target actually provides** before writing anything:
 
    ```bash

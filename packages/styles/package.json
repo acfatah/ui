@@ -1,0 +1,26 @@
+{
+  "name": "packages.styles",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Framework-free styles and tokens for acfatah/ui.",
+  "license": "MIT",
+  "exports": {
+    "./global.css": "./src/global.css",
+    "./*": "./src/*.ts"
+  },
+  "scripts": {
+    "format": "bunx --bun eslint --fix",
+    "lint": "bunx --bun eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "tailwindcss": "^4.3.3"
+  },
+  "devDependencies": {
+    "@acfatah/eslint-preset": "^5.0.0",
+    "eslint": "^10.7.0",
+    "eslint-plugin-format": "^2.0.1",
+    "typescript": "~6.0.3"
+  }
+}

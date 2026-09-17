@@ -24,8 +24,8 @@ This skill is repo-agnostic. It writes nothing until it knows where.
 
 1. **Target directory and component name** come from the arguments
    (`[target-dir] [ComponentName]`). If either is missing, ask. Do not
-   guess, and do not assume `packages/registry` — that path belongs to one
-   specific repository.
+   guess, and do not assume `packages/registry` or `packages/vue` —
+   each path belongs to one specific repository.
 2. **Discover what the target actually provides** before writing imports.
    List these and use what is there, rather than assuming the paths in this
    document:
@@ -34,6 +34,7 @@ This skill is repo-agnostic. It writes nothing until it knows where.
    ls <target>/src/composables/
    ls <target>/src/components/ui/icons/
    cat <target>/tsconfig.json          # confirm the @/ alias
+   ls <target>/../styles/src/          # shared styles package, if any
    ```
 
 3. **Read the target repo's own `CLAUDE.md` and `docs/`** if present. A
@@ -123,6 +124,24 @@ composition.
 This keeps styles greppable, diffable and readable without parsing a Vue
 template, and it is the entire multi-framework hedge: `styles.ts` has no
 Vue in it.
+
+### Where the real file lives
+
+Check in §0 whether the target repo keeps styles in a separate shared
+package. `acfatah/ui` does: the real file is
+`packages/styles/src/components/ui/<name>/styles.ts`, and the component
+directory holds a one-line re-export so `./styles` resolves in
+development:
+
+```ts
+// packages/vue/src/components/ui/button/styles.ts
+export * from 'packages.styles/components/ui/button/styles'
+```
+
+Write the class strings in the shared file, never in the re-export. The
+re-export is not published: `_registry.ts` ships the shared file with a
+`target` beside the component. If the target keeps `styles.ts` in the
+component directory, as `acfatah/shadcn-vue-ark` does, write it there.
 
 ### Naming
 

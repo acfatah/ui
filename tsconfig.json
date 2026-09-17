@@ -1,6 +1,7 @@
 {
   "files": [],
   "references": [
-    { "path": "packages/registry" }
+    { "path": "packages/styles" },
+    { "path": "packages/vue" }
   ]
 }

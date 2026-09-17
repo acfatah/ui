@@ -18,7 +18,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, './src'),
-      'packages.registry': path.resolve(import.meta.dirname, './src'),
+      'packages.vue': path.resolve(import.meta.dirname, './src'),
     },
   },
 })

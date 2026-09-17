@@ -4,7 +4,7 @@ import { html } from 'common-tags'
 
 export const registryItem = {
   type: 'registry:ui',
-  name: 'button',
+  name: 'vue/button',
   title: 'Button',
 
   description: html`

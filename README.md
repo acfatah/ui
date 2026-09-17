@@ -16,8 +16,9 @@ describe the intended interface, not a shipped one.
 
 What exists today is the conventions layer carried over from the previous
 repository — the agent skills in `.claude/skills/` — plus the workspace
-scaffold under `packages/registry/`, which has the configuration and the
-Tailwind token layer a component needs but no components in it.
+scaffold under `packages/`: `packages/vue/` for the Vue components and
+`packages/styles/` for the framework-free class strings and Tailwind token
+layer they share.
 
 ## Requirements
 
@@ -30,8 +31,8 @@ Tailwind token layer a component needs but no components in it.
 Once released, one setup item followed by the components you want:
 
 ```bash
-bunx --bun shadcn@latest add acfatah/ui/project-setup
-bunx --bun shadcn@latest add acfatah/ui/button
+bunx --bun shadcn@latest add acfatah/ui/vue/project-setup
+bunx --bun shadcn@latest add acfatah/ui/vue/button
 ```
 
 `npx shadcn@latest add ...` works the same way without Bun.
@@ -39,14 +40,14 @@ bunx --bun shadcn@latest add acfatah/ui/button
 Pin a version with a tag or a commit SHA:
 
 ```bash
-bunx --bun shadcn@latest add acfatah/ui/button#v0.1.0
+bunx --bun shadcn@latest add acfatah/ui/vue/button#v0.1.0
 ```
 
 Inspect before writing anything:
 
 ```bash
-bunx --bun shadcn@latest add acfatah/ui/button --dry-run
-bunx --bun shadcn@latest add acfatah/ui/button --diff
+bunx --bun shadcn@latest add acfatah/ui/vue/button --dry-run
+bunx --bun shadcn@latest add acfatah/ui/vue/button --diff
 ```
 
 ## Design decisions
@@ -70,8 +71,11 @@ styles object with `keyof typeof`. This keeps styles greppable and
 diffable, and is the whole reason a port to another framework would ever
 be tractable.
 
-**Vue only.** The repository name is framework-neutral so a port stays
-possible, but no port is planned and none should be assumed.
+**Vue only, laid out per framework.** Vue is the only implementation.
+Source lives in `packages/<framework>/` and items are addressed as
+`acfatah/ui/<framework>/<item>`, so a port would add a sibling package
+rather than restructure this one. No port is planned and none should be
+assumed.
 
 **Icons go through one indirection component.** No component imports an
 icon package directly. Swapping icon sets is editing one file, not
@@ -100,11 +104,13 @@ Partly built. Entries marked *planned* do not exist yet.
 apps/
   docs/            planned  Astro documentation site, also the sandbox
 packages/
-  registry/                 Component source, one directory per component
+  styles/                   Framework-free, shared by every framework
+    src/components/ui/      One styles.ts per component
+    src/global.css          Tailwind v4 entry and shared token layer
+  vue/                      Vue component source
     src/components/ui/      One directory per component
     src/composables/        use* modules only
     src/lib/                Pure functions and factories
-    src/styles/global.css   Tailwind v4 entry and shared token layer
 docs/              planned  Context documents, decisions, conventions
 .claude/skills/             Authoring and review skills for agents
 registry.json      planned  Consumer entry point, at the repository root
@@ -112,6 +118,12 @@ registry.json      planned  Consumer entry point, at the repository root
 
 `registry.json` is generated from the colocated `_registry.ts` files by
 the build CLI, which is also still to be written.
+
+Each framework's `styles.ts` inside a component directory is a one-line
+re-export of the real file in `packages/styles`, so the component can
+import `./styles` during development. It is never published. The
+registry item ships the real file instead, with a `target` beside the
+component, so the consumer gets the same `./styles` import.
 
 ## Relationship to shadcn-vue-ark
 
