@@ -16,9 +16,8 @@ describe the intended interface, not a shipped one.
 
 What exists today is the conventions layer carried over from the previous
 repository — the agent skills in `.claude/skills/` — plus the workspace
-scaffold under `packages/`: `packages/vue/` for the Vue components and
-`packages/styles/` for the framework-free class strings and Tailwind token
-layer they share.
+scaffold: `packages/vue/` for the Vue components and `shared/styles/` for
+the framework-free class strings and Tailwind token layer they share.
 
 ## Requirements
 
@@ -103,10 +102,11 @@ Partly built. Entries marked *planned* do not exist yet.
 ```
 apps/
   docs/            planned  Astro documentation site, also the sandbox
+shared/                     Framework-free source, copied on install
+  styles/
+    components/ui/          One styles.ts per component
+    global.css              Tailwind v4 entry and shared token layer
 packages/
-  styles/                   Framework-free, shared by every framework
-    src/components/ui/      One styles.ts per component
-    src/global.css          Tailwind v4 entry and shared token layer
   vue/                      Vue component source
     src/components/ui/      One directory per component
     src/composables/        use* modules only
@@ -119,8 +119,15 @@ registry.json      planned  Consumer entry point, at the repository root
 `registry.json` is generated from the colocated `_registry.ts` files by
 the build CLI, which is also still to be written.
 
+`shared/` is plain source, not a workspace package. Nothing in it is
+installed as a dependency; registry items copy its files into the
+consumer's project like any other source file. Framework packages reach
+it through the `~shared/*` alias (tsconfig paths plus Vite and Vitest
+aliases). The `~` prefix cannot be an npm name, so the build CLI can
+never mistake it for a dependency.
+
 Each framework's `styles.ts` inside a component directory is a one-line
-re-export of the real file in `packages/styles`, so the component can
+re-export of the real file in `shared/styles`, so the component can
 import `./styles` during development. It is never published. The
 registry item ships the real file instead, with a `target` beside the
 component, so the consumer gets the same `./styles` import.

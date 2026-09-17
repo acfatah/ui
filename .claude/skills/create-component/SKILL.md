@@ -34,7 +34,7 @@ This skill is repo-agnostic. It writes nothing until it knows where.
    ls <target>/src/composables/
    ls <target>/src/components/ui/icons/
    cat <target>/tsconfig.json          # confirm the @/ alias
-   ls <target>/../styles/src/          # shared styles package, if any
+   cat <target>/src/components/ui/*/styles.ts | head   # re-exports?
    ```
 
 3. **Read the target repo's own `CLAUDE.md` and `docs/`** if present. A
@@ -129,13 +129,13 @@ Vue in it.
 
 Check in §0 whether the target repo keeps styles in a separate shared
 package. `acfatah/ui` does: the real file is
-`packages/styles/src/components/ui/<name>/styles.ts`, and the component
+`shared/styles/components/ui/<name>/styles.ts`, and the component
 directory holds a one-line re-export so `./styles` resolves in
 development:
 
 ```ts
 // packages/vue/src/components/ui/button/styles.ts
-export * from 'packages.styles/components/ui/button/styles'
+export * from '~shared/styles/components/ui/button/styles'
 ```
 
 Write the class strings in the shared file, never in the re-export. The

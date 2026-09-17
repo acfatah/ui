@@ -9,6 +9,7 @@ export default defineConfig(
       '**/coverage/**',
       '**/tsconfig.*',
       'logs',
+      'packages/**',
     ],
   },
 
@@ -28,7 +29,7 @@ export default defineConfig(
       // `buttonStyles.variant` and `buttonStyles.size` are linted like any
       // `class` attribute.
       'better-tailwindcss': {
-        entryPoint: 'src/global.css',
+        entryPoint: 'shared/styles/global.css',
         variables: [
           ['variant', [{ match: 'objectValues' }]],
           ['size', [{ match: 'objectValues' }]],

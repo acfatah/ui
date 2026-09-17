@@ -1,1 +1,1 @@
-export * from 'packages.styles/components/ui/button/styles'
+export * from '~shared/styles/components/ui/button/styles'

@@ -153,8 +153,8 @@ Each is a question against the target, not an assertion about it.
      `withDefaults` rather than a `defaults` key, compound rules as an
      explicit `computed` appended to the `cn(...)` call. There is no
      `compoundVariants` key — if you find one, nothing reads it: 🟧.
-   - Target keeps styles in a shared package (`acfatah/ui`:
-     `packages/styles`): the component's own `styles.ts` must be a pure
+   - Target keeps styles in a shared source directory (`acfatah/ui`:
+     `shared/styles`): the component's own `styles.ts` must be a pure
      re-export with no class strings in it. Class strings written into
      the re-export never reach consumers, who receive the shared file: 🟥.
    - Target uses `variant.ts` / `cva`: check the cva usage is correct and

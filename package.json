@@ -9,12 +9,16 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "bun run --filter './packages/*' lint",
-    "format": "bun run --filter './packages/*' format",
+    "lint": "bunx --bun eslint shared && bun run --filter './packages/*' lint",
+    "format": "bunx --bun eslint --fix shared && bun run --filter './packages/*' format",
     "typecheck": "bun run --filter './packages/*' typecheck"
   },
   "devDependencies": {
+    "@acfatah/eslint-preset": "^5.0.0",
     "@types/bun": "^1.3.14",
+    "eslint": "^10.7.0",
+    "eslint-plugin-format": "^2.0.1",
+    "tailwindcss": "^4.3.3",
     "typescript": "~6.0.3"
   },
   "trustedDependencies": [

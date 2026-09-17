@@ -32,7 +32,7 @@ export default defineConfig(
       // object values hold Tailwind classes, so `buttonStyles.variant` and
       // `buttonStyles.size` are linted like any `class` attribute.
       'better-tailwindcss': {
-        entryPoint: '../styles/src/global.css',
+        entryPoint: '../../shared/styles/global.css',
         variables: [
           ['variant', [{ match: 'objectValues' }]],
           ['size', [{ match: 'objectValues' }]],
