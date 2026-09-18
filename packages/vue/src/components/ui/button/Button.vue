@@ -14,13 +14,29 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 })
 
 /*
-  `loading` disables the button as well as marking it busy. Returning
-  undefined rather than false keeps the attribute off the element
+  Returning undefined rather than false keeps an attribute off the element
   entirely, so `:disabled` and `[aria-disabled]` selectors do not match a
   button that is merely idle.
 */
-const nativeDisabled = computed(() => props.disabled || props.loading || undefined)
+const isDisabled = computed(() => props.disabled || undefined)
+const isInert = computed(() => props.disabled || props.loading || undefined)
 const isLoading = computed(() => props.loading || undefined)
+const tabindex = computed(() => (props.asChild && props.disabled ? -1 : undefined))
+
+const classes = computed(() => cn(
+  buttonStyles.base,
+  buttonStyles.variant[props.variant],
+  buttonStyles.size[props.size],
+  props.class,
+))
+
+function onClick(event: MouseEvent) {
+  if (!isInert.value)
+    return
+
+  event.preventDefault()
+  event.stopImmediatePropagation()
+}
 </script>
 
 <template>
@@ -28,17 +44,14 @@ const isLoading = computed(() => props.loading || undefined)
     data-scope="button"
     data-part="root"
     :as-child="props.asChild"
-    :type="props.type"
-    :disabled="nativeDisabled"
-    :aria-disabled="nativeDisabled"
+    :type="props.asChild ? undefined : props.type"
+    :disabled="isDisabled"
+    :aria-disabled="isInert"
     :aria-busy="isLoading"
     :data-loading="isLoading"
-    :class="cn(
-      buttonStyles.base,
-      buttonStyles.variant[props.variant],
-      buttonStyles.size[props.size],
-      props.class,
-    )"
+    :tabindex="tabindex"
+    :class="classes"
+    @click="onClick"
   >
     <slot />
   </ark.button>
