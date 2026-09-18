@@ -25,21 +25,27 @@ This skill is repo-agnostic. It reports nothing until it knows what it read.
    ```bash
    ls <target>/src/components/ui/<component>/   # .vue, styles.ts, types.ts
    ls <target>/src/components/ui/icons/         # the icon indirection module
+   cat <target>/src/components/ui/<component>/styles.ts
+   grep -A4 '"paths"' <target>/tsconfig.json
    ```
 
-   That first listing settles **where the class strings are**, which this
-   audit depends on repeatedly. Two layouts are live:
+   That settles **where the class strings are**, which this audit depends
+   on repeatedly. Three layouts are live:
 
-   | Target | Class strings | Icons |
-   |---|---|---|
-   | Current conventions | `styles.ts`, plain TS, composed by `cn` | `@/components/ui/icons` |
-   | Pre-rewrite (`shadcn-vue-ark`) | `variant.ts`, a `cva`/`tv` call | imported directly from the icon package |
+   | Layout | Component's `styles.ts` | Real class strings | Icons | Example |
+   | --- | --- | --- | --- | --- |
+   | Shared source directory | one line, `export * from '<alias>/…'` | the file the alias resolves to through tsconfig `paths` | `@/components/ui/icons`, where it exists | `acfatah/ui` (`~shared/*`) |
+   | Colocated | the class strings themselves | that file | `@/components/ui/icons` | — |
+   | `cva` | absent, `variant.ts` instead | `variant.ts`, a `cva`/`tv` call | imported directly from the icon package | `shadcn-vue-ark` |
 
-   Below, "`styles.ts`" means whichever of the two the listing found. Do not
-   report a missing `styles.ts` or a missing `icons/` as a finding — a target
-   on the older layout is not an accessibility defect.
+   Below, "the styles file" means the **resolved** file with the real
+   class strings, and findings cite that path. Grepping a one-line
+   re-export finds nothing and produces a false ✅ — the expensive
+   failure. Do not report a missing `styles.ts` or a missing `icons/` as a
+   finding — a target on an older layout is not an accessibility defect.
 
-3. **Read the target repo's own `CLAUDE.md` and `docs/`** if present. A
+3. **Read the target repo's own `CLAUDE.md`, `README.md` and `docs/`** if
+   present, walking up from the target to the repository root. A
    repository's own conventions win over this skill wherever they differ.
 
 Examples below use `@/` as the alias and `src/components/ui/<name>/` as the
@@ -72,10 +78,17 @@ Focus on the following areas, in priority order:
 - Focus returns to the trigger when a dialog/popover closes
 - `aria-modal="true"` set on modal dialogs
 - No focus loss when content changes dynamically
-- **Focus-ring classes live in `styles.ts`, not the template.** Grep the part's
-  export for `outline-none` and `focus-visible:`. A part that sets
+- **Focus-ring classes live in the styles file, not the template.** Grep
+  the part's export in the resolved file for `outline-none` and
+  `focus-visible:`. A part that sets
   `outline-none` with no `focus-visible:ring-*` replacement removed the only
   focus indicator — 🟥, and it is greppable without reading the SFC.
+- **A ring is not enough in forced-colors mode.** Box-shadow rings vanish
+  under Windows High Contrast. In Tailwind v4, `outline-hidden` keeps a
+  transparent outline that forced-colors paints, while `outline-none`
+  removes the outline outright. `outline-none` plus a ring-only
+  `focus-visible:` is a 🟧 (WCAG 2.4.7); check the target's Tailwind major
+  first.
 
 ### 4. Labelling
 - All interactive elements have an accessible name
@@ -91,7 +104,7 @@ Focus on the following areas, in priority order:
   styles is the greppable tell that an icon-only control exists at all.
 
 ### 5. Color & Contrast
-- **Judge contrast from the Tailwind tokens in `styles.ts`** — `bg-primary`,
+- **Judge contrast from the Tailwind tokens in the styles file** — `bg-primary`,
   `text-primary-foreground` and friends — resolved against the target's theme
   CSS. The template carries no class strings to read.
 - Text meets WCAG AA contrast ratio (4.5:1 normal, 3:1 large text)
@@ -103,7 +116,8 @@ Focus on the following areas, in priority order:
 
 ### 6. Motion & Animation
 - Animations respect `prefers-reduced-motion`. In Tailwind v4 that is the
-  `motion-reduce:` variant, in `styles.ts` alongside the animation it guards.
+  `motion-reduce:` variant, in the styles file alongside the animation it
+  guards.
 - Any `@keyframes` or `--animate-*` token the component needs ships through
   `cssVars` + `css` in `_registry.ts` (see `create-component` §8). A
   reduced-motion escape hatch that exists only in the docs site never reaches

@@ -25,9 +25,17 @@ This skill is repo-agnostic. It writes nothing until it knows where.
    ls <target>/src/composables/
    ls <target>/src/lib/
    cat <target>/tsconfig.json      # confirm the @/ alias
+   grep -rh "name:" <target>/src --include=_registry.ts | head -3
    ```
 
-3. **Read the target repo's own `CLAUDE.md` and `docs/`** if present. A
+   The last line settles the **item-name prefix**. A target laid out per
+   framework (`acfatah/ui`: `packages/vue`) names every item
+   `<framework>/<name>`, as in `vue/button`; a single-framework target
+   (`shadcn-vue-ark`) uses bare names. Composables and libs follow the
+   same prefix as the components beside them.
+
+3. **Read the target repo's own `CLAUDE.md`, `README.md` and `docs/`** if
+   present, walking up from the target to the repository root. A
    repository's own conventions win over this skill wherever they differ.
 
 Examples below use `@/` as the alias because both repositories use it.
@@ -57,7 +65,10 @@ is present regardless.
 | Test | calls into Vue's reactivity, or `getCurrentInstance` / `onMounted` / `provide` | neither |
 | File name | camelCase, `use<Thing>.ts` | kebab-case, `<thing>.ts` |
 | Export | named, matches the file name | named, matches the file name |
-| Registry item | bare camelCase, `registry:file` | `<name>-lib`, `registry:lib` |
+| Registry item | camelCase, `registry:file` | `<name>-lib`, `registry:lib` |
+
+Both item names take the target's framework prefix where it has one
+(§0): `vue/useForwardProps`, `vue/format-bytes-lib`.
 
 The case asymmetry is real and load-bearing: `useForwardProps.ts` sits
 beside `format-bytes.ts`. Match the directory, not the neighbouring
@@ -131,9 +142,16 @@ directory — there is no per-module `_registry.ts` to write.
 Three consequences:
 
 - **The filename is the registry address.** `@/composables/useForwardProps`
-  becomes `<owner>/<repo>/useForwardProps`; `@/lib/utils` becomes
-  `<owner>/<repo>/utils-lib`. Renaming the file is a breaking change for
-  every consumer who pinned it.
+  becomes `<owner>/<repo>/<prefix>useForwardProps`; `@/lib/utils` becomes
+  `<owner>/<repo>/<prefix>utils-lib`, where `<prefix>` is the framework
+  segment from §0 or empty. In `acfatah/ui` that is
+  `acfatah/ui/vue/useForwardProps`. Renaming the file is a breaking change
+  for every consumer who pinned it.
+- **A module is framework code, even a pure one.** Everything under a
+  framework package gets that framework's prefix. A helper that genuinely
+  has no framework in it still lives here until a second framework needs
+  it; only then does it move to the target's shared source directory
+  (`acfatah/ui`: `shared/`).
 - **Never list a `src/composables/*` or `src/lib/*` path in a component's
   `_registry.ts` `files[]`.** A component that imports the module gets it
   through auto-discovered `registryDependencies`, and shadcn flattens those

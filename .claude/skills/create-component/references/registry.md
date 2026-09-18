@@ -10,8 +10,9 @@ The registry build scans each component directory and derives the item from
 what it finds:
 
 - Every file in the component directory becomes an item `file`,
-  automatically. Do NOT list the component's own `.vue` / `index.ts` /
-  `types.ts` / `styles.ts` files.
+  automatically, **except a one-line styles re-export** (see "Shared
+  styles" below). Do NOT list the component's own `.vue` / `index.ts` /
+  `types.ts` files.
 - `import` statements become `dependencies` (npm packages) and
   `registryDependencies` (other registry items).
 - `_registry.ts` supplies metadata only.
@@ -23,8 +24,9 @@ same file and goes stale when the component stops importing it — so the
 build **throws** if a `files[]` entry points at a composable or lib path.
 
 `files[]` is only for files the scanner cannot see. That is rare; usually
-omit it entirely. The one live example is a component-local stylesheet
-shipped with an explicit `registry:file` type.
+omit it entirely. The two cases are a component-local stylesheet shipped
+with an explicit `registry:file` type, and a shared styles file (see
+"Shared styles").
 
 > The concrete implementation of this model — the build scripts, the
 > generated dependency addresses and the thrown error text — is documented
@@ -32,9 +34,53 @@ shipped with an explicit `registry:file` type.
 > `shadcn@4.11.0`. Reconcile against that repo if the behaviour surprises
 > you.
 
+## Item names
+
+`name` is the install address after `<owner>/<repo>/`, so it is a public
+contract: renaming it breaks every command a consumer wrote down.
+
+- Match the siblings. A target laid out per framework prefixes every item
+  with its framework — components, composables and libs alike:
+  `vue/accordion`, addressed as `acfatah/ui/vue/accordion`. A
+  single-framework target uses bare names (`accordion`).
+- Write the full name in `_registry.ts`. The build does not add the
+  prefix, so names stay greppable.
+- `registryDependencies` use the same full names.
+
+## Shared styles
+
+Applies when the component's `styles.ts` is a one-line re-export of a
+shared source directory (`acfatah/ui`: `~shared/*` → `shared/`).
+
+- **The re-export is never an item file.** Shipping it gives the consumer
+  an import of an alias they do not have.
+- **The resolved shared file is.** It ships with a `target` beside the
+  component, so the consumer's `import ... from './styles'` resolves:
+
+  ```ts
+  files: [
+    {
+      path: 'shared/styles/components/ui/accordion/styles.ts',
+      type: 'registry:ui',
+      target: 'components/ui/accordion/styles.ts',
+    },
+  ],
+  ```
+
+- **An alias import is never a dependency.** It resolves to source that
+  is copied, not to an npm package or another item.
+
+Until the build CLI exists and enforces this, state the intended entry
+explicitly as above. Once it derives the entry from the re-export, drop
+the explicit `files[]` and follow the build. Where `target` lands in a
+consumer's project is verified from CLI source only; confirm with
+`shadcn add … --dry-run` against a pushed branch before relying on it.
+
 ## Rules
 
-- `_registry.ts` carries metadata only (see above).
+- `_registry.ts` carries metadata only (see above), plus the shared
+  styles entry while the build cannot derive it.
+- `name` carries the target's framework prefix (see "Item names").
 - Never list a composable or lib path in `files[]`. The build throws.
 - `dependencies` is only for npm packages the import scanner cannot infer
   (e.g. `tw-animate-css`).
@@ -57,7 +103,7 @@ import { html } from 'common-tags'
 
 export const registryItem = {
   type: 'registry:ui',
-  name: 'accordion',
+  name: 'vue/accordion',
   title: 'Accordion',
 
   description: html`
@@ -96,8 +142,9 @@ export const registryItem = {
 export default registryItem
 ```
 
-Note `cn` in `dependencies` and no icon package, even though this component
-renders a chevron.
+Note the `vue/` prefix, `cn` in `dependencies` and no icon package, even
+though this component renders a chevron. In a shared-styles target, add
+the `files[]` entry from "Shared styles" above.
 
 ## Component-owned CSS (utilities, keyframes, tokens)
 
@@ -141,11 +188,15 @@ Component-local stylesheet (rare): if the CSS is large or better kept in a file
 (the `sonner` case), ship a component-local `styles.css` via `files[]` with an
 explicit `registry:file` type plus a `css` `@import` entry, instead of an inline
 `css` object. Note this is a stylesheet, distinct from the component's
-`styles.ts`, which is scanned like any other source file and is never listed.
+`styles.ts`: a colocated `styles.ts` is scanned like any other source file
+and is never listed; a shared one follows "Shared styles" above.
 
 ## After writing it
 
 Run the target repository's registry build and confirm the new item's
 `registryDependencies` lists the composables, libs and icons module you
-imported. If one is missing, the scanner does not recognise that import
-prefix — fix the import path or the scanner, not the manifest.
+imported, with the framework prefix, and that its `files` contain the
+shared styles file and not the re-export. If a dependency is missing, the
+scanner does not recognise that import prefix — fix the import path or the
+scanner, not the manifest. If the target has no registry build yet, say so
+and stop there.

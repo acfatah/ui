@@ -34,10 +34,31 @@ This skill is repo-agnostic. It writes nothing until it knows where.
    ls <target>/src/composables/
    ls <target>/src/components/ui/icons/
    cat <target>/tsconfig.json          # confirm the @/ alias
-   cat <target>/src/components/ui/*/styles.ts | head   # re-exports?
+   grep -rh "name:" <target>/src --include=_registry.ts | head -3
    ```
 
-3. **Read the target repo's own `CLAUDE.md` and `docs/`** if present. A
+   The last line settles the **item-name prefix**: `vue/button` in a
+   target laid out per framework, bare `button` otherwise. Match the
+   siblings.
+
+3. **Resolve where the class strings live**, using a sibling component:
+
+   ```bash
+   cat <target>/src/components/ui/<sibling>/styles.ts
+   grep -A4 '"paths"' <target>/tsconfig.json
+   ```
+
+   | Layout | Component's `styles.ts` | Real class strings | Example |
+   | --- | --- | --- | --- |
+   | Shared source directory | one line, `export * from '<alias>/…'` | the file the alias resolves to through tsconfig `paths` | `acfatah/ui` (`~shared/*`) |
+   | Colocated | the class strings themselves | that file | — |
+   | `cva` | absent, `variant.ts` instead | `variant.ts` | `shadcn-vue-ark` |
+
+   Every styles step below reads and writes the **resolved** file, and
+   cites that path. A one-line re-export is wiring, not the styles.
+
+4. **Read the target repo's own `CLAUDE.md`, `README.md` and `docs/`** if
+   present, walking up from the target to the repository root. A
    repository's own conventions win over this skill wherever they differ.
 
 Examples below use `@/` as the alias and `src/components/ui/<name>/` as the
@@ -127,21 +148,32 @@ Vue in it.
 
 ### Where the real file lives
 
-Check in §0 whether the target repo keeps styles in a separate shared
-package. `acfatah/ui` does: the real file is
-`shared/styles/components/ui/<name>/styles.ts`, and the component
-directory holds a one-line re-export so `./styles` resolves in
-development:
+Per the layout §0 resolved. In a **shared source directory** target there
+are two files, and only one of them holds class strings:
 
 ```ts
-// packages/vue/src/components/ui/button/styles.ts
+// shared/styles/components/ui/button/styles.ts   <- the real file
+export const buttonStyles = { /* ... */ }
+```
+
+```ts
+// packages/vue/src/components/ui/button/styles.ts  <- one-line re-export
 export * from '~shared/styles/components/ui/button/styles'
 ```
 
-Write the class strings in the shared file, never in the re-export. The
-re-export is not published: `_registry.ts` ships the shared file with a
-`target` beside the component. If the target keeps `styles.ts` in the
-component directory, as `acfatah/shadcn-vue-ark` does, write it there.
+The re-export exists only so `import ... from './styles'` resolves in
+development. It is never published: the registry item ships the shared
+file with a `target` beside the component, so the consumer gets a real
+`./styles` and no import is rewritten (`references/registry.md`). Class
+strings written into the re-export never reach a consumer.
+
+The shared directory is plain source, not a package. Reach it only
+through the alias, never a relative `../../..` path and never a package
+name — the registry build turns package-like imports into npm
+`dependencies`.
+
+In a **colocated** target, `styles.ts` in the component directory is the
+real file; write it there.
 
 ### Naming
 
@@ -170,23 +202,37 @@ export const accordionContentStyles = 'overflow-hidden text-sm'
 variant axis.
 
 ```ts
-// button/styles.ts
+// button/styles.ts (abridged; long strings wrap in template literals)
 export const buttonStyles = {
-  base: 'inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*=\'size-\'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  base: `
+    inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium
+    whitespace-nowrap transition-all outline-none
+    focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50
+    disabled:pointer-events-none disabled:opacity-50
+    [&_svg]:pointer-events-none [&_svg]:shrink-0
+    [&_svg:not([class*='size-'])]:size-4
+  `,
 
   variant: {
-    default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
-    secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
-    destructive: 'bg-destructive text-white shadow-xs hover:bg-destructive/90',
-    outline: 'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground',
-    ghost: 'hover:bg-accent hover:text-accent-foreground',
-    link: 'text-primary underline-offset-4 hover:underline',
+    default: `
+      bg-primary text-primary-foreground shadow-xs
+      hover:bg-primary/90
+    `,
+    ghost: `
+      hover:bg-accent hover:text-accent-foreground
+      dark:hover:bg-accent/50
+    `,
   },
 
   size: {
-    sm: 'h-8 gap-1.5 rounded-md px-3',
-    md: 'h-9 px-4 py-2',
-    lg: 'h-10 rounded-md px-6',
+    sm: `
+      h-8 gap-1.5 rounded-md px-3
+      has-[>svg]:px-2.5
+    `,
+    md: `
+      h-9 px-4 py-2
+      has-[>svg]:px-3
+    `,
     icon: 'size-9',
   },
 }
@@ -195,10 +241,11 @@ export const buttonStyles = {
 ```vue
 <!-- Button.vue -->
 <script setup lang="ts">
+import type { ButtonProps } from './types'
+
 import { ark } from '@ark-ui/vue'
 import { cn } from 'cn'
 
-import type { ButtonProps } from './types'
 import { buttonStyles } from './styles'
 
 const props = withDefaults(defineProps<ButtonProps>(), {
@@ -387,7 +434,8 @@ Verify each of these against the target (section 0) before using it.
 - Helpers: `@/lib/createContext`. Pure factories and functions live in
   `src/lib/`, not `src/composables/` — see the `create-composable` skill
 - Dynamic/asChild: `import { Dynamic } from '@/lib/dynamic'`
-- Styles: `./styles`
+- Styles: `./styles`, always, in the SFC, `types.ts` and `index.ts`. In a
+  shared-directory target only the one-line re-export imports the alias
 - **Icons: `@/components/ui/icons` only.** No component imports an icon
   package directly, ever. The icons module is one file of named re-exports
   that the consumer owns, so swapping icon sets is one edit rather than
@@ -424,10 +472,14 @@ Verify each of these against the target (section 0) before using it.
 ## Step-by-step
 
 1. Establish the target directory and component name (section 0), and
-   discover the target's composables, icons module and alias.
+   discover the target's composables, icons module, alias, item-name
+   prefix and styles layout.
 2. Create `components/ui/{component-name}/`
 3. Decide simple vs complex
-4. Create `styles.ts` (string shape or object shape, section 3)
+4. Create the styles (string shape or object shape, section 3). In a
+   shared-directory target: the class strings in the shared file, then
+   the one-line re-export in the component directory. In a colocated
+   target: `styles.ts` in the component directory.
 5. Create `types.ts` (`references/props-emits.md` for the interfaces)
 6. Create the `.vue` files
 7. Create `context.ts` if it needs shared state (`references/context.md`)
@@ -436,7 +488,9 @@ Verify each of these against the target (section 0) before using it.
 10. Create `_registry.ts` (`references/registry.md`)
 11. Run the target's formatter over the new component directory (commonly
     `bun run format <component-directory>` from the target package root),
-    then its typecheck.
+    then its typecheck. A shared styles file sits outside the package, so
+    lint it with the config that covers it (`acfatah/ui`: the root
+    `bun run lint`).
 
 ## Best practices
 

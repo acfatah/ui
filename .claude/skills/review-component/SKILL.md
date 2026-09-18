@@ -28,25 +28,38 @@ it knows what the house style is.
    ls <target>/src/composables/ <target>/src/lib/
    cat <target>/package.json                      # which scripts exist
    cat <target>/tsconfig.json                     # confirm the @/ alias
+   grep -rh "name:" <target>/src --include=_registry.ts | head -3
    ```
 
-3. **Establish which file holds the Tailwind class strings**, before
-   reading the `.vue` at all. Two layouts are live and both will stay live
-   until the rewrite lands components:
+   The last line settles the **item-name prefix** the siblings use
+   (`vue/button` or bare `button`).
 
-   | Layout | Class strings | Icons |
-   | --- | --- | --- |
-   | Current conventions | `styles.ts`, plain TS, composed by `cn` | `@/components/ui/icons` |
-   | `shadcn-vue-ark` | `variant.ts`, a `cva` call | imported from the icon package directly |
+3. **Establish which file holds the Tailwind class strings**, before
+   reading the `.vue` at all:
+
+   ```bash
+   cat <target>/src/components/ui/<name>/styles.ts
+   grep -A4 '"paths"' <target>/tsconfig.json
+   ```
+
+   | Layout | Component's `styles.ts` | Real class strings | Icons | Example |
+   | --- | --- | --- | --- | --- |
+   | Shared source directory | one line, `export * from '<alias>/…'` | the file the alias resolves to through tsconfig `paths` | `@/components/ui/icons`, where it exists | `acfatah/ui` (`~shared/*`) |
+   | Colocated | the class strings themselves | that file | `@/components/ui/icons` | — |
+   | `cva` | absent, `variant.ts` instead | `variant.ts`, a `cva` call | imported from the icon package directly | `shadcn-vue-ark` |
+
+   **Every styles check below reads the resolved file and cites its path**
+   in `file:line`. A one-line re-export has no class strings to find.
 
    This matters more than it sounds. The styles decision moved focus rings,
    `disabled:` states and every colour token out of templates, so a review
-   that reads only the `.vue` finds nothing and reports a clean bill of
-   health. The failure mode is a false ✅, not an error, which is the
-   expensive kind. **The older layout is not itself a defect** — see *Read
-   the siblings first* below.
+   that reads only the `.vue` — or only the one-line re-export — finds
+   nothing and reports a clean bill of health. The failure mode is a false
+   ✅, not an error, which is the expensive kind. **The older layout is not
+   itself a defect** — see *Read the siblings first* below.
 
-4. **Read the target repo's own `CLAUDE.md` and `docs/`** if present. A
+4. **Read the target repo's own `CLAUDE.md`, `README.md` and `docs/`** if
+   present, walking up from the target to the repository root. A
    repository's own conventions win over this skill wherever they differ.
    Walk up from the target — a registry package may carry its own
    `CLAUDE.md` above a workspace one, and the nearest wins.
@@ -89,6 +102,15 @@ about the repository, filed at 🟨, not a licence to pick a side.
   target's ESLint config. Hand-checking them duplicates the tool and
   manufactures low-severity noise. Hand-check them only where the target has
   no lint config.
+- **Except class strings in a TS styles file.** Tailwind lint plugins see
+  template `class` attributes reliably and TS object values often not at
+  all — in `acfatah/ui` better-tailwindcss passes a misordered, unknown
+  class in `styles.ts` (verified 2026-09-17). Do not take a clean lint run
+  as evidence the styles file was checked: hand-check class order,
+  conflicts and duplicates there, and say once in Overall suggestions
+  that the linter does not cover it.
+- A shared styles file sits outside the target package, so its lint
+  config may be a different one (`acfatah/ui`: the root `bun run lint`).
 - If the target has no `package.json` — or no component directory at all —
   say so plainly, review by reading, and stop. Do not invent a command or a
   path.
@@ -100,7 +122,7 @@ feel, so two runs agree.
 
 | | Means |
 | --- | --- |
-| 🟥 Critical | Broken at runtime, or breaks consumers on install: a `_registry.ts` the build throws on, a wrong registry address, an XSS sink. |
+| 🟥 Critical | Broken at runtime, or breaks consumers on install: a `_registry.ts` the build throws on, a wrong registry address, a shipped re-export in place of the real styles file, an XSS sink. |
 | 🟧 High | Wrong but not fatal: a missing `data-part`, an Ark type imported into `types.ts`, an unlabelled icon-only control, a barrel import. |
 | 🟨 Medium | Inconsistent with the sibling components, or a real performance cost. |
 | 🟩 Low | Naming, JSDoc, ordering the linter does not cover. |
@@ -128,8 +150,14 @@ Each is a question against the target, not an assertion about it.
    `files[]` makes the build throw: 🟥. Custom CSS (a `@utility` class,
    `@keyframes`, a theme token) ships via `cssVars` + `css` so it installs
    with the component, rather than being assumed present in a global
-   stylesheet. Full model:
-   `repos/ui/.claude/skills/create-component/references/registry.md`.
+   stylesheet. **Name**: a `name` missing the framework prefix its
+   siblings carry (`accordion` beside `vue/button`) is a wrong install
+   address: 🟥. **Shared styles**: a `files[]` entry pointing at the
+   one-line re-export, or an explicit entry that omits the resolved shared
+   file while the build cannot derive it — including having no `files[]`
+   at all — ships a broken `./styles` import: 🟥. An alias path listed
+   under `dependencies`: 🟥. Full model: `create-component`'s
+   `references/registry.md`.
 4. **Direct-path imports.** A component importing `@/composables` rather
    than `@/composables/useForwardProps` resolves to the barrel's own
    registry item and drags every module in that directory into the
@@ -144,7 +172,11 @@ Each is a question against the target, not an assertion about it.
    `asChild?: boolean` where the part is polymorphic,
    `reactiveOmit(props, 'class')` before forwarding, and
    `useForwardProps` / `useForwardPropsEmits` chosen by whether the
-   component has emits. See `references/props-emits.md`.
+   component has emits. See `create-component`'s
+   `references/props-emits.md`. A single-element component that passes
+   props explicitly, in a target with no forwarding composables, is
+   graded on whether it forwards everything it declares, not on the
+   composable.
 7. **Styles — per the target's convention, established in §0.**
    - Target uses `styles.ts`: no Tailwind strings left in the template,
      `<componentName><Part>Styles` naming with one export per part, no
@@ -154,9 +186,11 @@ Each is a question against the target, not an assertion about it.
      explicit `computed` appended to the `cn(...)` call. There is no
      `compoundVariants` key — if you find one, nothing reads it: 🟧.
    - Target keeps styles in a shared source directory (`acfatah/ui`:
-     `shared/styles`): the component's own `styles.ts` must be a pure
-     re-export with no class strings in it. Class strings written into
-     the re-export never reach consumers, who receive the shared file: 🟥.
+     `shared/styles`): every check above runs against the resolved shared
+     file, and findings cite it. The component's own `styles.ts` must be a
+     pure one-line re-export through the alias. Class strings written into
+     it never reach consumers, who receive the shared file: 🟥. A relative
+     `../../..` path or a package-name import instead of the alias: 🟧.
    - Target uses `variant.ts` / `cva`: check the cva usage is correct and
      leave the choice alone.
 8. **Icons.** If the target has an icons module, no component imports an
@@ -190,8 +224,8 @@ Each is a question against the target, not an assertion about it.
 ## 5. Performance
 
 - Work done in the render path that belongs in a `computed`.
-- A `styles.ts` object or class string rebuilt on every render rather than
-  hoisted to module scope.
+- A styles object or class string rebuilt on every render rather than
+  hoisted to module scope (check the resolved file, §0).
 - Teleport/portal contents mounted eagerly when the component is closed.
 - Reactive wrappers around large or deeply nested data where `shallowRef`
   or `markRaw` is correct.
