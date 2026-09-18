@@ -19,6 +19,14 @@ export const registryItem = {
     '@ark-ui/vue',
     'cn',
   ],
+
+  files: [
+    {
+      path: 'shared/styles/components/ui/button/styles.ts',
+      type: 'registry:ui',
+      target: 'components/ui/button/styles.ts',
+    },
+  ],
 } satisfies RegistryItem
 
 export default registryItem

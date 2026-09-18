@@ -4,6 +4,7 @@ export const buttonStyles = {
     whitespace-nowrap transition-all outline-none
     focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50
     disabled:pointer-events-none disabled:opacity-50
+    aria-disabled:pointer-events-none aria-disabled:opacity-50
     aria-invalid:border-destructive aria-invalid:ring-destructive/20
     dark:aria-invalid:ring-destructive/40
     [&_svg]:pointer-events-none [&_svg]:shrink-0
@@ -27,7 +28,7 @@ export const buttonStyles = {
       dark:focus-visible:ring-destructive/40
     `,
     outline: `
-      border border-solid border-border bg-background shadow-xs
+      border border-border bg-background shadow-xs
       hover:bg-accent hover:text-accent-foreground
       dark:border-input dark:bg-input/30
       dark:hover:bg-input/50
@@ -44,12 +45,12 @@ export const buttonStyles = {
 
   size: {
     'xs': `
-      size-fit shrink-0 gap-1 rounded-sm px-2 py-0.5 text-xs
-      has-[svg]:p-1
+      h-6 gap-1 rounded-sm px-2 text-xs
+      has-[>svg]:px-1.5
       [&_svg:not([class*='size-'])]:size-3
     `,
     'sm': `
-      h-8 gap-1.5 rounded-md px-3
+      h-8 gap-1.5 px-3
       has-[>svg]:px-2.5
     `,
     'md': `
@@ -57,7 +58,7 @@ export const buttonStyles = {
       has-[>svg]:px-3
     `,
     'lg': `
-      h-10 rounded-md px-6
+      h-10 px-6
       has-[>svg]:px-4
     `,
     'icon': 'size-9',
