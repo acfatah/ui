@@ -1,7 +1,10 @@
 # Spec patterns
 
-Conventions for `<ComponentName>.spec.ts`, taken from `Button.spec.ts`,
-the reference spec. Read it beside this file.
+Conventions for `<ComponentName>.spec.ts`, taken from the target's
+reference specs. Read the one for your tier beside this file. In
+`acfatah/ui`: `button/Button.spec.ts` for a single-element T1,
+`switch/Switch.spec.ts` for a multi-part T2 (composed fixture, state
+matrix, controlled `v-model`, toggle flow).
 
 ## Imports and setup
 
@@ -22,6 +25,22 @@ teleported content (T3 and up).
   spec tests one part.
 - A local `render<Name>(props, slot)` helper when most tests render the
   same way. Tests that need `attrs` or a container call `render` directly.
+
+## Multi-part components
+
+- One spec for the component, rendering the full composition a consumer
+  writes through a local `render<Name>(rootProps, parts)` helper: a
+  `defineComponent` with a template, root props bound with `v-bind`,
+  each part's props from a `parts` object. Import each part's `.vue`.
+- Key `parts` by capitalised part name (`Label`, `Control`), never the
+  lower-case name: `check:props` matches object keys by name alone, so a
+  `label:` key "covers" any part's `label` prop whether or not a test
+  sets it. The same collision can come from Ark's own shapes (`ids.label`);
+  when it does, say so in a comment, since a waiver will never be read.
+- Pointer flows click the **visible** target. Specs load no Tailwind CSS,
+  so a styled track or thumb has no size and Playwright refuses it as
+  not visible; a hidden input is visually hidden by Ark. Click the label
+  text, which sits inside the root `<label>` and toggles the same way.
 
 ## Asserting
 
@@ -72,6 +91,14 @@ teleported content (T3 and up).
   row and a new value is tested without editing the spec. Assert every
   class of the requested value is present, and the default value's own
   classes absent.
+
+## First run of a new component
+
+Each Ark subpath a component imports (`@ark-ui/vue/switch`) is listed in
+the browser project's `optimizeDeps.include` in `vitest.config.ts`. An
+unlisted one is discovered mid-run, Vite reloads, Ark lands on a second
+copy of Vue, and every test fails with `Cannot read properties of null
+(reading 'ce')`. Add the subpath rather than re-running until it passes.
 
 ## Props coverage waivers
 

@@ -75,6 +75,12 @@ This skill is repo-agnostic. It writes nothing until it knows where.
 Examples below use `@/` as the alias and `src/components/ui/<name>/` as the
 component root because both repositories use them. Verify, don't assume.
 
+**Copy from the reference component for your tier** where the target has
+one (its `README.md` names them). In `acfatah/ui`: `button` for T1,
+`switch` for T2 — multi-part Ark parts forwarding through
+`useForwardProps` / `useForwardPropsEmits`, a local `loading` prop, a
+part that composes another component (`Switch.Label` wraps `label`).
+
 ## Directory structure
 
 ```text

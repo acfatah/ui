@@ -124,6 +124,11 @@ allowed; declaring one lower is a defect, because it silently drops the
 specs that tier owes. A tier is assigned when a component is created,
 never retro-fitted.
 
+Each tier has a reference component to copy from: `button` for T1 (a
+single element with variant and size axes) and `switch` for T2 (a
+multi-part Ark wrapper with prop and emit forwarding, a state matrix and
+one primary-flow spec). Their specs are the reference specs.
+
 Component names used as examples here and below (`command`, `calendar`,
 `tooltip`) are from the predecessor, where the model was applied to all
 62 of its components. They are illustrations of the rule, not a claim
