@@ -47,6 +47,57 @@ contract: renaming it breaks every command a consumer wrote down.
   prefix, so names stay greppable.
 - `registryDependencies` use the same full names.
 
+## Categories and tier
+
+Two metadata fields every component item carries.
+
+`categories` groups the docs navigation. Pick from the target's own set —
+discover it from the siblings, do not invent a value:
+
+```bash
+grep -rh -A6 "categories:" <target>/src --include=_registry.ts | head -30
+```
+
+`acfatah/ui` uses seven: `form`, `actions`, `navigation`, `overlay`,
+`data-display`, `feedback`, `layout`. Membership is not exclusive; a
+component that genuinely serves two domains lists both (`calendar` is
+`form` and `data-display`). Never put a tier in here — categories answer
+"what is this for", the tier answers "how deep do its tests go", and the
+docs sidebar only ever reads categories.
+
+`meta.tier` records the test-depth tier. It goes in `meta` because it is
+ours, not part of the shadcn schema (`meta` is `Record<string, any>`,
+`categories` is `string[]`; both optional, verified against
+`shadcn@4.21.0` `dist/schema/index.d.ts`).
+
+Derive the tier from the component you just wrote:
+
+| Tier | Test | Contract |
+| --- | --- | --- |
+| T1 | no Ark state machine, no portal | variants and sizes only, no interaction spec |
+| T2 | a state machine, renders in flow | state matrix, one spec on the primary flow |
+| T3 | state machine plus `Positioner` + `Teleport` | T2 plus open, placement, dismiss, and assert the teleported content rendered |
+| T4 | composite, or a high-surface / async / control-collection widget | T3 plus domain states, edge cases, one spec per core sub-flow |
+
+Classify the portal from the **component source**, not from whether a demo
+uses `Teleport` — most overlays let Ark teleport at runtime, so a demo is
+not evidence.
+
+T1 to T3 are mechanical, so do not guess them: read the imports. **T4 is
+not** — it is a judgement call in both halves. Importing one component
+does not make a component T4; `command` imports `dialog` and is T3
+*because* of it, inheriting that portal's focus trap. T4 is for
+assembling several (`sidebar` takes `button`, `input`, `sheet` and
+`tooltip`) or for a high-surface, async or control-collection widget.
+
+Declaring a tier *higher* than the source implies is allowed and needs no
+justification; declaring one *lower* is the bug, because it silently
+drops the specs that tier owes.
+
+The tier is assigned when the component is created, never retro-fitted.
+Full model and the per-tier spec contract: `.scratch/rewrite-decisions.md`,
+"Test depth by tier".
+
 ## Shared styles
 
 Applies when the component's `styles.ts` is a one-line re-export of a
@@ -81,6 +132,8 @@ consumer's project is verified from CLI source only; confirm with
 - `_registry.ts` carries metadata only (see above), plus the shared
   styles entry while the build cannot derive it.
 - `name` carries the target's framework prefix (see "Item names").
+- `categories` and `meta.tier` are both required (see "Categories and
+  tier"). A component item with neither is incomplete.
 - Never list a composable or lib path in `files[]`. The build throws.
 - `dependencies` is only for npm packages the import scanner cannot infer
   (e.g. `tw-animate-css`).
@@ -114,11 +167,20 @@ export const registryItem = {
     - shadcn/ui: https://ui.shadcn.com/docs/components/accordion
   `,
 
+  categories: [
+    'layout',
+  ],
+
   dependencies: [
     '@ark-ui/vue',
     '@vueuse/core',
     'cn',
   ],
+
+  meta: {
+    // Ark state machine, renders in flow, no portal.
+    tier: 'T2',
+  },
 
   cssVars: {
     theme: {

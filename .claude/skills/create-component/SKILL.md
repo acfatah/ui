@@ -41,6 +41,17 @@ This skill is repo-agnostic. It writes nothing until it knows where.
    target laid out per framework, bare `button` otherwise. Match the
    siblings.
 
+   Discover the target's **category set** the same way, and use only
+   values already in it:
+
+   ```bash
+   grep -rh -A6 "categories:" <target>/src --include=_registry.ts | head -30
+   ```
+
+   A target whose `_registry.ts` files carry no `categories` does not use
+   them. Say so and leave the field out rather than introducing a
+   convention the target has not adopted.
+
 3. **Resolve where the class strings live**, using a sibling component:
 
    ```bash
@@ -415,8 +426,13 @@ Each component has a metadata-only manifest. Files and `import`-derived
 dependencies are scanned automatically. NEVER list composables or lib files
 in `files[]` (the build throws). Any custom CSS the component needs (a
 `@utility` class, `@keyframes`, or a `--animate-*` / theme token) ships via
-`cssVars` + `css` so it installs with the component. Full pattern and the
-packaging model: `references/registry.md`.
+`cssVars` + `css` so it installs with the component.
+
+Two fields are not derivable and must be written: `categories` (the docs
+grouping, from the target's own set) and `meta.tier` (the test-depth
+tier, read off the component you just wrote — T1 to T3 are mechanical,
+so check the imports rather than guessing). Full pattern, the tier table
+and the packaging model: `references/registry.md`.
 
 ## 9. Import conventions
 
@@ -485,7 +501,8 @@ Verify each of these against the target (section 0) before using it.
 7. Create `context.ts` if it needs shared state (`references/context.md`)
 8. Create `index.ts`
 9. Create `namespace.ts` if complex (`references/namespace.md`)
-10. Create `_registry.ts` (`references/registry.md`)
+10. Create `_registry.ts` (`references/registry.md`), including
+    `categories` and `meta.tier`
 11. Run the target's formatter over the new component directory (commonly
     `bun run format <component-directory>` from the target package root),
     then its typecheck. A shared styles file sits outside the package, so

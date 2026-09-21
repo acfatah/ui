@@ -147,6 +147,16 @@ checks:
 - **Shared styles.** Ship the resolved shared file with a `target` beside
   the component, never the re-export (`references/registry.md`, "Shared
   styles").
+- **Categories.** Add `categories` from the target's own set, discovered
+  from the siblings (`create-component` §0). A predecessor item written
+  before the target adopted them will not have the field.
+- **Tier.** Add `meta.tier`, and **re-derive it from the migrated source**
+  rather than copying the predecessor's. A migration can move a component
+  across a boundary — dropping `cva` for `styles.ts` does not, but
+  swapping a hand-rolled overlay for Ark `Positioner` + `Teleport` turns a
+  T2 into a T3. Copying the old tier inherits the old classification and,
+  where it is now too low, silently drops the specs that tier owes. See
+  `references/registry.md`, "Categories and tier".
 
 ### 6. Icons and cn
 
@@ -180,7 +190,8 @@ Ensure imports follow the project's alphabetized order (enforced by ESLint):
 4. If a `namespace.ts` is missing, follow `references/namespace.md` in the
    `create-component` skill.
 5. If `_registry.ts` is missing or stale, follow `references/registry.md` in the
-   `create-component` skill.
+   `create-component` skill. Re-derive `meta.tier` from the migrated
+   source and add `categories`; do not carry either across unchecked.
 6. Run the target's formatter over the component directory as the final
    step (commonly `bun run format {component-directory}` from the target
    package root).

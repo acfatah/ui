@@ -15,6 +15,11 @@ export const registryItem = {
     - shadcn/ui: https://ui.shadcn.com/docs/components/button
   `,
 
+  categories: [
+    'actions',
+    'form',
+  ],
+
   dependencies: [
     '@ark-ui/vue',
     'cn',
@@ -27,6 +32,16 @@ export const registryItem = {
       target: 'components/ui/button/styles.ts',
     },
   ],
+
+  meta: {
+    /**
+     * Test depth tier. Governs the spec and demo contract this component
+     * must meet. See `.scratch/rewrite-decisions.md`, "Test depth by tier".
+     *
+     * T1: no Ark state machine, no portal. Variant and size demos only.
+     */
+    tier: 'T1',
+  },
 } satisfies RegistryItem
 
 export default registryItem

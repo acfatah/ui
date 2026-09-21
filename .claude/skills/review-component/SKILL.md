@@ -32,7 +32,17 @@ it knows what the house style is.
    ```
 
    The last line settles the **item-name prefix** the siblings use
-   (`vue/button` or bare `button`).
+   (`vue/button` or bare `button`). Settle two more from the siblings —
+   whether the target uses `categories`, and which values it allows, and
+   whether it uses `meta.tier`:
+
+   ```bash
+   grep -rh -A6 "categories:\|meta:" <target>/src --include=_registry.ts
+   ```
+
+   Neither field present across the siblings means the target has not
+   adopted them: skip §3a entirely rather than grading against a
+   convention this repository does not hold.
 
 3. **Establish which file holds the Tailwind class strings**, before
    reading the `.vue` at all:
@@ -205,6 +215,58 @@ Each is a question against the target, not an assertion about it.
     composables and lib modules in the plain node project. Absent where the
     siblings have one is 🟨; absent where no sibling has one is a note in
     Overall suggestions, not a finding.
+11. **Categories and tier.** Applies only where the siblings carry these
+    fields; a target that has not adopted them fails no check here. See
+    "Tier drift" below.
+
+## 3a. Tier drift
+
+Only where the target uses `meta.tier` (established in §0 from the
+siblings). This check exists because its failure is a **false ✅**: a
+component whose declared tier is too low is never *reported* as
+under-tested, it is simply never asked for the specs that tier owes.
+Nothing else in this review would catch it.
+
+Derive the tier from the component source, then compare:
+
+| Boundary | Evidence in source | Mechanical? |
+| --- | --- | --- |
+| T1 to T2 | an Ark machine import (`@ark-ui/vue/<machine>`), or a `use*Context` call | yes |
+| T2 to T3 | `Positioner` together with `Teleport` | yes |
+| T3 to T4 | assembles several components into a larger widget, or is high-surface / async / a control collection | **no** |
+
+Read the portal off the source, never off a demo — most overlays let Ark
+teleport at runtime, so a demo that does not mention `Teleport` is not
+evidence of anything.
+
+**Derive only T1 to T3.** T4 is a judgement call in both halves, so it is
+never derived and a T4 declaration is never contradicted. Importing one
+component is not evidence of T4: `command` imports `dialog` and is T3
+*because* of it, inheriting that portal's focus trap. What makes T4 is
+assembling several — `sidebar` pulls in `button`, `input`, `sheet` and
+`tooltip`. Treat composition as a prompt to ask whether T4 is right, not
+as a derivation.
+
+- Declared **lower** than derived, within T1 to T3: 🟧. State both tiers
+  and name the specs the real tier owes that the component does not have.
+- Declared **higher** than derived: not a finding. That is the T4
+  judgement call and the deliberate boundary calls (`input`, `calendar`,
+  `range-calendar`) the tier model preserves. Do not "correct" it down.
+- **Absent** where the siblings have it: 🟧 — the field is what makes
+  the tier checkable at all.
+- `categories` absent, or carrying a value no sibling uses: 🟨. A tier
+  value inside `categories` is always wrong: the two answer different
+  questions and only `categories` reaches the docs sidebar.
+
+Then check the declared tier's contract is actually met, per
+`.scratch/rewrite-decisions.md`, "Test depth by tier" — T2 owes a state
+matrix and a primary-flow spec, T3 adds open, placement, dismiss and an
+assertion that the teleported content rendered, T4 adds domain states and
+edge cases. A tier declared correctly but not honoured is 🟨, graded like
+any other missing spec. Non-interactive members of higher tiers
+(`progress`, `breadcrumb`, `table`, `fieldset`, `button-group` in the
+predecessor) owe the matrix and the accessibility check but no
+interaction spec — their absence is not a finding.
 
 ## 4. Correctness
 
@@ -275,8 +337,9 @@ reason to skip the misses above.
 1. A short summary of what the component does, in plain language, and which
    conventions the target was found to follow (§0).
 2. Findings, grouped in this order, each ordered by severity:
-   **Registry invariants**, **Correctness**, **Performance**, **Security**,
-   **Accessibility**.
+   **Registry invariants**, **Tier drift**, **Correctness**,
+   **Performance**, **Security**, **Accessibility**. Omit **Tier drift**
+   where the target does not use `meta.tier`.
 3. **Overall suggestions** — including any convention gap between this
    repository and a sibling repository, recorded as a note.
 4. Omit any group that has no findings, or give it a single ✅ line. Never
