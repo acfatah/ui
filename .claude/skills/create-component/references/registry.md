@@ -70,6 +70,23 @@ contract: renaming it breaks every command a consumer wrote down.
 
 Two metadata fields every component item carries.
 
+### Infrastructure items carry neither
+
+An item under `components/ui/` that is not itself a component takes no
+`categories` and no `meta.tier`. The icons indirection (`vue/icons`) is
+the standing example: a list of re-exports has no docs sidebar home, so
+a category would have to be invented, and no behavioural surface, so a
+tier would be meaningless. It ships no `.spec.ts` for the same reason.
+
+The test: does it render anything a reader could be shown, and does it
+have behaviour a spec could assert? Two noes means infrastructure. Say
+so in a comment in the item, so the omission reads as a decision rather
+than an oversight, and so a reviewer does not file it as incomplete.
+
+This is a narrow exemption, not a judgement call to reach for. A
+component with a thin surface is still a component: `separator` renders,
+so it is T1 with a category, not infrastructure.
+
 `categories` groups the docs navigation. Pick from the target's own set —
 discover it from the siblings, do not invent a value:
 
@@ -152,8 +169,10 @@ consumer's project is verified from CLI source only; confirm with
 - `_registry.ts` carries metadata only (see above), plus the shared
   styles entry while the build cannot derive it.
 - `name` carries the target's framework prefix (see "Item names").
-- `categories` and `meta.tier` are both required (see "Categories and
-  tier"). A component item with neither is incomplete.
+- `categories` and `meta.tier` are both required on a *component* item
+  (see "Categories and tier"). A component item with neither is
+  incomplete. An infrastructure item such as `vue/icons` carries neither
+  by rule — see "Infrastructure items carry neither".
 - Never list a composable or lib path in `files[]`. The build throws.
 - Never list a `.spec.ts` or anything under `examples/` in `files[]`.
   See "Never an item file".

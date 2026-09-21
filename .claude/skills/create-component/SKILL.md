@@ -462,8 +462,11 @@ in `files[]` (the build throws). Any custom CSS the component needs (a
 Two fields are not derivable and must be written: `categories` (the docs
 grouping, from the target's own set) and `meta.tier` (the test-depth
 tier, read off the component you just wrote — T1 to T3 are mechanical,
-so check the imports rather than guessing). Full pattern, the tier table
-and the packaging model: `references/registry.md`.
+so check the imports rather than guessing). An infrastructure item under
+`components/ui/` — one that renders nothing and has no behaviour to
+assert, as the icons indirection does not — carries neither, by rule.
+Full pattern, the tier table, that exemption and the packaging model:
+`references/registry.md`.
 
 ## 9. Import conventions
 
@@ -533,7 +536,8 @@ Verify each of these against the target (section 0) before using it.
 8. Create `index.ts`
 9. Create `namespace.ts` if complex (`references/namespace.md`)
 10. Create `_registry.ts` (`references/registry.md`), including
-    `categories` and `meta.tier`
+    `categories` and `meta.tier` — unless what you built is
+    infrastructure rather than a component, which carries neither
 11. Create `examples/`, one `{ComponentName}{Case}.vue` per case the
     tier's demo contract owes (see "Directory structure"). Neither these
     nor the `.spec.ts` are listed in `files[]`.

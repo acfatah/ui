@@ -216,8 +216,9 @@ Each is a question against the target, not an assertion about it.
     siblings have one is 🟨; absent where no sibling has one is a note in
     Overall suggestions, not a finding.
 11. **Categories and tier.** Applies only where the siblings carry these
-    fields; a target that has not adopted them fails no check here. See
-    "Tier drift" below.
+    fields, and only to *component* items; a target that has not adopted
+    them fails no check here, and neither does an infrastructure item.
+    See "Tier drift" below.
 
 ## 3a. Tier drift
 
@@ -226,6 +227,19 @@ siblings). This check exists because its failure is a **false ✅**: a
 component whose declared tier is too low is never *reported* as
 under-tested, it is simply never asked for the specs that tier owes.
 Nothing else in this review would catch it.
+
+**First, is this a component at all?** An item under `components/ui/`
+that renders nothing a reader could be shown and has no behaviour a spec
+could assert is infrastructure — `vue/icons`, a list of re-exports, is
+the standing example. Infrastructure carries no `categories`, no
+`meta.tier` and no `.spec.ts` **by rule**, so skip this whole section
+and check 10 for it. Filing those omissions against such an item is a
+false finding against a deliberate decision, which is the mirror of the
+failure this section exists to prevent. See `create-component`'s
+`references/registry.md`, "Infrastructure items carry neither".
+
+The exemption is narrow. A component with a thin surface is still a
+component: `separator` renders, so it owes a category and a T1 tier.
 
 Derive the tier from the component source, then compare:
 
