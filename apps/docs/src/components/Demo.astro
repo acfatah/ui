@@ -1,0 +1,43 @@
+---
+/**
+ * Demo — a live example, joined to the fenced source that follows it.
+ *
+ *   import ButtonDemo from "packages.vue/components/ui/button/examples/ButtonDemo.vue";
+ *
+ *   <Demo>
+ *     <ButtonDemo client:load />
+ *   </Demo>
+ *
+ *   ```vue
+ *   ...the example file, verbatim...
+ *   ```
+ *
+ * The fence, not a `?raw` import, carries the source: the Markdown view
+ * (`index.md`, `llms-full.txt`) strips every component but keeps fences, so
+ * humans and agents read the same text.
+ *
+ * The island must be imported in the MDX file that uses it: Astro rejects
+ * `client:*` on a component that arrives through the globals registry.
+ * `Demo` itself is static, so it is registered globally.
+ */
+---
+
+<div
+  class="nb-demo flex min-h-40 items-center justify-center-safe overflow-x-auto rounded-lg border border-border bg-background p-8"
+>
+  <slot />
+</div>
+
+<style is:global>
+  .docs-content .nb-demo:has(+ .nb-code-figure) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .docs-content .nb-demo + .nb-code-figure {
+    margin-top: 0;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+</style>

@@ -16,8 +16,9 @@ describe the intended interface, not a shipped one.
 
 What exists today is the conventions layer carried over from the previous
 repository — the agent skills in `.claude/skills/` — plus the workspace
-scaffold: `packages/vue/` for the Vue components and `shared/styles/` for
-the framework-free class strings and Tailwind token layer they share.
+scaffold: `packages/vue/` for the Vue components, `shared/styles/` for
+the framework-free class strings and Tailwind token layer they share, and
+`apps/docs/`, the documentation site.
 
 ## Requirements
 
@@ -91,8 +92,8 @@ two in every consumer's install.
 **Versioning is git tags plus `#ref` pinning.** Registry items carry no
 version of their own. `registryDependencies` are pinned.
 
-**No Storybook.** Documentation is an Astro site that imports the real
-components. Interaction and accessibility assertions live in Vitest
+**No Storybook.** Documentation is an Astro site on [Nimbus][4] that
+imports the real components. Interaction and accessibility assertions live in Vitest
 browser-mode tests driven by Playwright.
 
 **Test depth is tiered.** How deep a component's specs and demos go is
@@ -152,7 +153,7 @@ Partly built. Entries marked *planned* do not exist yet.
 
 ```
 apps/
-  docs/            planned  Astro documentation site, also the sandbox
+  docs/                     Nimbus (Astro) documentation site
 shared/                     Framework-free source, copied on install
   styles/
     components/ui/          One styles.ts per component
@@ -166,6 +167,18 @@ docs/              planned  Context documents, decisions, conventions
 .claude/skills/             Authoring and review skills for agents
 registry.json      planned  Consumer entry point, at the repository root
 ```
+
+The documentation site runs locally only for now:
+
+```bash
+bun run docs:dev     # http://localhost:4321
+bun run docs:build   # static output in apps/docs/dist
+```
+
+Component pages render the real examples from
+`packages/vue/src/components/ui/<name>/examples/`, and the sidebar groups
+components by the `categories` in each `_registry.ts`. Its own
+conventions are in `apps/docs/AGENT.md`.
 
 `registry.json` is generated from the colocated `_registry.ts` files by
 the build CLI, which is also still to be written.
@@ -200,3 +213,4 @@ MIT. Copyright (c) 2026 Achmad F. Ibrahim.
 [1]: https://ark-ui.com/
 [2]: https://ui.shadcn.com/docs/registry
 [3]: https://github.com/acfatah/shadcn-vue-ark
+[4]: https://nimbus-docs.com

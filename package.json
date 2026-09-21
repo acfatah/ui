@@ -9,9 +9,11 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "bunx --bun eslint shared && bun run --filter './packages/*' lint",
-    "format": "bunx --bun eslint --fix shared && bun run --filter './packages/*' format",
-    "typecheck": "bun run --filter './packages/*' typecheck"
+    "lint": "bunx --bun eslint shared && bun run --filter './packages/*' --filter './apps/*' lint",
+    "format": "bunx --bun eslint --fix shared && bun run --filter './packages/*' --filter './apps/*' format",
+    "typecheck": "bun run --filter './packages/*' --filter './apps/*' typecheck",
+    "docs:dev": "bun run --filter apps.docs dev",
+    "docs:build": "bun run --filter apps.docs build"
   },
   "devDependencies": {
     "@acfatah/eslint-preset": "^5.0.0",

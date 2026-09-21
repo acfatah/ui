@@ -9,6 +9,7 @@ export default defineConfig(
       '**/coverage/**',
       '**/tsconfig.*',
       'logs',
+      'apps/**',
       'packages/**',
     ],
   },

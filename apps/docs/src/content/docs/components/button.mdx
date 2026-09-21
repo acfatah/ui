@@ -1,0 +1,295 @@
+---
+title: Button
+description: Displays a button or a component that looks like a button.
+---
+
+import ButtonDemo from "packages.vue/components/ui/button/examples/ButtonDemo.vue";
+import ButtonDefault from "packages.vue/components/ui/button/examples/ButtonDefault.vue";
+import ButtonVariants from "packages.vue/components/ui/button/examples/ButtonVariants.vue";
+import ButtonSizes from "packages.vue/components/ui/button/examples/ButtonSizes.vue";
+import ButtonRounded from "packages.vue/components/ui/button/examples/ButtonRounded.vue";
+import ButtonWithIcon from "packages.vue/components/ui/button/examples/ButtonWithIcon.vue";
+import ButtonLoading from "packages.vue/components/ui/button/examples/ButtonLoading.vue";
+import ButtonAsChild from "packages.vue/components/ui/button/examples/ButtonAsChild.vue";
+
+Displays a button or a component that looks like a button. Built on Ark UI's
+`ark.button` factory; styles live in a framework-free `styles.ts`.
+
+<Demo>
+  <ButtonDemo client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { ArrowUpIcon } from '@/components/ui/icons'
+</script>
+
+<template>
+  <div
+    class="
+      flex flex-wrap items-center gap-2
+      md:flex-row
+    "
+  >
+    <Button variant="outline">
+      Button
+    </Button>
+
+    <Button
+      variant="outline"
+      size="icon"
+      aria-label="Submit"
+    >
+      <ArrowUpIcon data-part="icon" />
+    </Button>
+  </div>
+</template>
+```
+
+## Installation
+
+```bash
+bunx --bun shadcn@latest add acfatah/ui/vue/button
+```
+
+## Usage
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <Button variant="outline">
+    Button
+  </Button>
+</template>
+```
+
+## Examples
+
+### Default
+
+The `default` variant at the default size.
+
+<Demo>
+  <ButtonDefault client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <Button>
+    Default
+  </Button>
+</template>
+```
+
+### Variants
+
+Every `variant`, each with an icon-only button beside it.
+
+<Demo>
+  <ButtonVariants client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import type { ButtonVariant } from '@/components/ui/button'
+
+import { Button, buttonStyles } from '@/components/ui/button'
+import { ChevronRightIcon } from '@/components/ui/icons'
+
+const variants = Object.keys(buttonStyles.variant) as ButtonVariant[]
+</script>
+
+<template>
+  <div
+    class="
+      flex flex-col items-start gap-8
+      sm:flex-row
+    "
+  >
+    <div
+      v-for="variant in variants"
+      :key="variant"
+      class="flex items-start gap-2"
+    >
+      <Button
+        :variant="variant"
+        class="w-min"
+      >
+        {{ variant }}
+      </Button>
+
+      <Button
+        :variant="variant"
+        size="icon"
+        aria-label="Next"
+      >
+        <ChevronRightIcon data-part="icon" />
+      </Button>
+    </div>
+  </div>
+</template>
+```
+
+### Sizes
+
+Every `size`. The `icon` sizes are square and expect a single icon with an `aria-label`.
+
+<Demo>
+  <ButtonSizes client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import type { ButtonSize } from '@/components/ui/button'
+
+import { Button, buttonStyles } from '@/components/ui/button'
+import { ArrowUpIcon } from '@/components/ui/icons'
+
+const sizes = Object.keys(buttonStyles.size) as ButtonSize[]
+</script>
+
+<template>
+  <div
+    class="
+      flex flex-col items-start gap-8
+      sm:flex-row
+    "
+  >
+    <div
+      v-for="size in sizes"
+      :key="size"
+      class="flex items-start gap-2"
+    >
+      <template v-if="size.startsWith('icon')">
+        {{ size }}:&nbsp;
+      </template>
+      <template v-else>
+        <Button :size="size" variant="outline">
+          {{ size }}
+        </Button>
+      </template>
+
+      <Button
+        :size="size"
+        variant="outline"
+        aria-label="Submit"
+      >
+        <ArrowUpIcon data-part="icon" />
+      </Button>
+    </div>
+  </div>
+</template>
+```
+
+### Rounded
+
+Override the radius through `class`; `cn` resolves the conflict.
+
+<Demo>
+  <ButtonRounded client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { ArrowUpIcon } from '@/components/ui/icons'
+</script>
+
+<template>
+  <Button
+    variant="outline"
+    size="icon"
+    aria-label="Scroll up"
+    class="rounded-full"
+  >
+    <ArrowUpIcon data-part="icon" />
+  </Button>
+</template>
+```
+
+### With icon
+
+Icons come from `@/components/ui/icons`, the single icon indirection, and take `data-part="icon"`.
+
+<Demo>
+  <ButtonWithIcon client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { GitBranchIcon } from '@/components/ui/icons'
+</script>
+
+<template>
+  <Button variant="outline" size="sm">
+    <GitBranchIcon data-part="icon" />
+    New Branch
+  </Button>
+</template>
+```
+
+### Loading
+
+`loading` marks the button busy and blocks activation without setting native `disabled`, so focus stays on the button. The spinner is slot content you supply.
+
+<Demo>
+  <ButtonLoading client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { LoaderCircleIcon } from '@/components/ui/icons'
+</script>
+
+<!--
+  `loading` marks the button busy and blocks activation without setting
+  the native `disabled` attribute, so it keeps focus rather than dropping
+  it to <body> the moment a submit starts. The spinner is ordinary slot
+  content; the button does not draw one for you.
+-->
+<template>
+  <Button
+    size="sm"
+    variant="outline"
+    loading
+  >
+    <LoaderCircleIcon data-part="icon" class="animate-spin" />
+    Submit
+  </Button>
+</template>
+```
+
+### As child
+
+`as-child` renders the single child element instead of a `<button>`, merging props and styles onto it. Use it for links that look like buttons.
+
+<Demo>
+  <ButtonAsChild client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <Button as-child>
+    <a href="/login">Login</a>
+  </Button>
+</template>
+```
+
+## References
+
+- [Ark UI factory](https://ark-ui.com/docs/components/factory)
+- [shadcn/ui Button](https://ui.shadcn.com/docs/components/button)

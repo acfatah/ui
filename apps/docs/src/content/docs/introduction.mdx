@@ -1,0 +1,33 @@
+---
+title: Introduction
+description: Accessible Vue 3 components you install as source and own.
+---
+
+Accessible Vue 3 components built on [Ark UI](https://ark-ui.com/), styled
+with Tailwind CSS v4, and distributed as a
+[shadcn registry](https://ui.shadcn.com/docs/registry) rather than an npm
+package. You install source files into your own project and own them from
+that point on.
+
+<Aside type="caution">
+  Pre-release. Nothing here is installable yet, and commands describe the
+  intended interface, not a shipped one.
+</Aside>
+
+## How it is built
+
+- **Registry, not a library.** Items are GitHub-addressed, as
+  `acfatah/ui/vue/<item>`, and conform to the shadcn registry schemas.
+- **Ark UI for behaviour.** Ark and Zag.js own accessibility, focus
+  management and state. This project owns styling and API surface.
+- **Styles in framework-free TypeScript.** Tailwind class strings live in a
+  plain `styles.ts` beside each component, composed with `cn`. No variant
+  library.
+- **One icon indirection.** Components import icons from
+  `@/components/ui/icons`, never from an icon package, so swapping icon sets
+  is one edit.
+
+## Next
+
+Read [Installation](/installation), then browse the components in the
+sidebar.

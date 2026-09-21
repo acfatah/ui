@@ -1,0 +1,37 @@
+---
+title: Installation
+description: Add the project setup item, then the components you want.
+---
+
+## Requirements
+
+- `shadcn` CLI v4 or newer. GitHub-address registries need v4+.
+- Vue 3.5 or newer.
+- Tailwind CSS v4.
+
+## Install
+
+One setup item, followed by the components you want:
+
+```bash
+bunx --bun shadcn@latest add acfatah/ui/vue/project-setup
+bunx --bun shadcn@latest add acfatah/ui/vue/button
+```
+
+`npx shadcn@latest add ...` works the same way without Bun.
+
+## Pin a version
+
+Pin with a tag or a full commit SHA. Without a ref you get the default
+branch.
+
+```bash
+bunx --bun shadcn@latest add acfatah/ui/vue/button#v0.1.0
+```
+
+## Inspect before writing
+
+```bash
+bunx --bun shadcn@latest add acfatah/ui/vue/button --dry-run
+bunx --bun shadcn@latest add acfatah/ui/vue/button --diff
+```

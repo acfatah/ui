@@ -1,0 +1,4 @@
+[install]
+# Nimbus's Markdown engine loads a native binding at prerender time from
+# inside the built `dist/`, where only root `node_modules` is visible.
+publicHoistPattern = ["satteri", "satteri-source-parser"]
