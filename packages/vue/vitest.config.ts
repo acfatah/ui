@@ -25,6 +25,7 @@ export default defineConfig({
           alias: {
             '@': path.resolve(import.meta.dirname, './src'),
             '~shared': path.resolve(import.meta.dirname, '../../shared'),
+            '~test': path.resolve(import.meta.dirname, './test'),
           },
         },
         test: {
