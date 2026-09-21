@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import type { ButtonSize } from '@/components/ui/button'
-
-import { Button, buttonStyles } from '@/components/ui/button'
-import { ArrowUpIcon } from '@/components/ui/icons'
-
-const sizes = Object.keys(buttonStyles.size) as ButtonSize[]
+import { Button } from '@/components/ui/button'
+import { ArrowUpRightIcon } from '@/components/ui/icons'
 </script>
 
 <template>
@@ -14,26 +10,55 @@ const sizes = Object.keys(buttonStyles.size) as ButtonSize[]
       sm:flex-row
     "
   >
-    <div
-      v-for="size in sizes"
-      :key="size"
-      class="flex items-start gap-2"
-    >
-      <template v-if="size.startsWith('icon')">
-        {{ size }}:&nbsp;
-      </template>
-      <template v-else>
-        <Button :size="size" variant="outline">
-          {{ size }}
-        </Button>
-      </template>
-
+    <div class="flex items-start gap-2">
+      <Button size="xs" variant="outline">
+        xs
+      </Button>
       <Button
-        :size="size"
-        variant="outline"
+        size="icon-xs"
         aria-label="Submit"
+        variant="outline"
       >
-        <ArrowUpIcon data-part="icon" />
+        <ArrowUpRightIcon data-part="icon" />
+      </Button>
+    </div>
+
+    <div class="flex items-start gap-2">
+      <Button size="sm" variant="outline">
+        Small
+      </Button>
+      <Button
+        size="icon-sm"
+        aria-label="Submit"
+        variant="outline"
+      >
+        <ArrowUpRightIcon data-part="icon" />
+      </Button>
+    </div>
+
+    <div class="flex items-start gap-2">
+      <Button variant="outline">
+        Default
+      </Button>
+      <Button
+        size="icon"
+        aria-label="Submit"
+        variant="outline"
+      >
+        <ArrowUpRightIcon data-part="icon" />
+      </Button>
+    </div>
+
+    <div class="flex items-start gap-2">
+      <Button variant="outline" size="lg">
+        Large
+      </Button>
+      <Button
+        size="icon-lg"
+        aria-label="Submit"
+        variant="outline"
+      >
+        <ArrowUpRightIcon data-part="icon" />
       </Button>
     </div>
   </div>

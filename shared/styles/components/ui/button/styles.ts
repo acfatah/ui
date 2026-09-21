@@ -61,8 +61,9 @@ export const buttonStyles = {
       h-10 px-6
       has-[>svg]:px-4
     `,
-    'icon': 'size-9',
+    'icon-xs': 'size-6',
     'icon-sm': 'size-8',
+    'icon': 'size-9',
     'icon-lg': 'size-10',
   },
 }

@@ -15,6 +15,7 @@
 
 export {
   ArrowUpIcon,
+  ArrowUpRightIcon,
   ChevronRightIcon,
   GitBranchIcon,
   LoaderCircleIcon,
