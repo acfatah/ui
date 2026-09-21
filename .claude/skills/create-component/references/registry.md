@@ -10,12 +10,31 @@ The registry build scans each component directory and derives the item from
 what it finds:
 
 - Every file in the component directory becomes an item `file`,
-  automatically, **except a one-line styles re-export** (see "Shared
-  styles" below). Do NOT list the component's own `.vue` / `index.ts` /
-  `types.ts` files.
+  automatically, **except the three kinds below**. Do NOT list the
+  component's own `.vue` / `index.ts` / `types.ts` files.
 - `import` statements become `dependencies` (npm packages) and
   `registryDependencies` (other registry items).
 - `_registry.ts` supplies metadata only.
+
+### Never an item file
+
+Three things live in a component directory and must never reach a
+consumer. The build excludes them; nothing may list them in `files[]`.
+
+| Excluded | Why |
+| --- | --- |
+| A one-line styles re-export | It imports an alias the consumer does not have. The resolved shared file ships instead — see "Shared styles". |
+| `*.spec.ts` | A browser-mode spec pulls `vitest`, `vitest-browser-vue` and Playwright into a project that installed a button. |
+| `examples/**` | Demo SFCs for the docs site. They import sibling components and icons the consumer did not ask for, and the consumer wants the component, not its catalogue. |
+
+Verify this, do not assume it. The predecessor's build
+(`packages/registry/src/cli/commands/build/build-ui-registry.ts`) walks
+the directory flat — `if (!dirent.isFile()) continue` — so it skips
+`examples/` by accident rather than by rule, and it has **no `.spec.ts`
+filter at all**. That never mattered there, because the predecessor has
+zero colocated component specs. `acfatah/ui` has one per component, so a
+build ported from that source ships it. The exclusions above are the
+rule; the flat walk is not.
 
 Composables and libs are their own registry items. A component that imports
 one gets it through `registryDependencies`, and shadcn v4 flattens those
@@ -136,6 +155,8 @@ consumer's project is verified from CLI source only; confirm with
 - `categories` and `meta.tier` are both required (see "Categories and
   tier"). A component item with neither is incomplete.
 - Never list a composable or lib path in `files[]`. The build throws.
+- Never list a `.spec.ts` or anything under `examples/` in `files[]`.
+  See "Never an item file".
 - `dependencies` is only for npm packages the import scanner cannot infer
   (e.g. `tw-animate-css`).
 - **Do not list the icon npm package.** Components import

@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@ark-ui/vue": "^5.37.2",
+    "@lucide/vue": "^1.47.0",
     "@vueuse/core": "^14.3.0",
     "cn": "0.3.0",
     "tailwindcss": "^4.3.3",

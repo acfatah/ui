@@ -84,6 +84,9 @@ components/ui/{component-name}/
 ├── {ComponentName}Item.vue    (if applicable)
 ├── {ComponentName}Content.vue (if applicable)
 ├── {ComponentName}Trigger.vue (if applicable)
+├── {ComponentName}.spec.ts    (never shipped)
+├── examples/                  (never shipped)
+│   └── {ComponentName}{Case}.vue
 ├── index.ts
 ├── types.ts
 ├── styles.ts
@@ -93,6 +96,34 @@ components/ui/{component-name}/
 ```
 
 There is no `variant.ts`. Everything that was in it is now in `styles.ts`.
+
+The two marked entries are development artefacts. A consumer installing
+the component gets neither — see `references/registry.md`, "Never an item
+file". Do not list them in `files[]`.
+
+### examples/
+
+One SFC per documented case, named `{ComponentName}{Case}.vue`:
+`ButtonVariants.vue`, `ButtonAsChild.vue`. Component-prefixed, so a docs
+page importing several components' demos never collides on a name —
+`vue/multi-word-component-names` is off in the preset, so nothing
+enforces this.
+
+Each file is a complete, copy-pasteable composition, because that is what
+the docs page shows in its code panel: it imports what a consumer would
+import, uses the documented API convention (the dotted namespace for a
+complex component), and carries no story harness or argument plumbing.
+
+There is no `examples/index.ts`. A docs page imports each file by path
+twice — once as a component, once with `?raw` for the source panel — and
+Astro rejects a `client:load` island that came through a registry rather
+than a per-file import (`.scratch/rewrite-decisions.md`, "Docs framework:
+Nimbus"). A barrel would never be the thing imported.
+
+Which cases a component owes is its tier's demo contract
+(`references/registry.md`, "Categories and tier"). A `{ComponentName}Demo.vue`
+showing the component in a realistic composition, and a canonical
+`{ComponentName}Default.vue`, are useful at every tier.
 
 ## 1. Vue component structure
 
@@ -503,7 +534,10 @@ Verify each of these against the target (section 0) before using it.
 9. Create `namespace.ts` if complex (`references/namespace.md`)
 10. Create `_registry.ts` (`references/registry.md`), including
     `categories` and `meta.tier`
-11. Run the target's formatter over the new component directory (commonly
+11. Create `examples/`, one `{ComponentName}{Case}.vue` per case the
+    tier's demo contract owes (see "Directory structure"). Neither these
+    nor the `.spec.ts` are listed in `files[]`.
+12. Run the target's formatter over the new component directory (commonly
     `bun run format <component-directory>` from the target package root),
     then its typecheck. A shared styles file sits outside the package, so
     lint it with the config that covers it (`acfatah/ui`: the root
