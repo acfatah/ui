@@ -140,7 +140,8 @@ const variants = Object.keys(buttonStyles.variant) as ButtonVariant[]
 
 ### Sizes
 
-Every `size`. The `icon` sizes are square and expect a single icon with an `aria-label`.
+Every `size`. The `icon` sizes are square and expect a single icon with an
+`aria-label`.
 
 <Demo>
   <ButtonSizes client:load />
@@ -217,7 +218,8 @@ import { ArrowUpIcon } from '@/components/ui/icons'
 
 ### With icon
 
-Icons come from `@/components/ui/icons`, the single icon indirection, and take `data-part="icon"`.
+Icons come from `@/components/ui/icons`, the single icon indirection, and take
+`data-part="icon"`.
 
 <Demo>
   <ButtonWithIcon client:load />
@@ -239,7 +241,9 @@ import { GitBranchIcon } from '@/components/ui/icons'
 
 ### Loading
 
-`loading` marks the button busy and blocks activation without setting native `disabled`, so focus stays on the button. The spinner is slot content you supply.
+`loading` marks the button busy and blocks activation without setting native
+`disabled`, so focus stays on the button. The spinner is slot content you
+supply.
 
 <Demo>
   <ButtonLoading client:load />
@@ -271,7 +275,8 @@ import { LoaderCircleIcon } from '@/components/ui/icons'
 
 ### As child
 
-`as-child` renders the single child element instead of a `<button>`, merging props and styles onto it. Use it for links that look like buttons.
+`as-child` renders the single child element instead of a `<button>`, merging
+props and styles onto it. Use it for links that look like buttons.
 
 <Demo>
   <ButtonAsChild client:load />

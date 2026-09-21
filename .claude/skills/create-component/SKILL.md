@@ -109,16 +109,19 @@ page importing several components' demos never collides on a name —
 `vue/multi-word-component-names` is off in the preset, so nothing
 enforces this.
 
-Each file is a complete, copy-pasteable composition, because that is what
-the docs page shows in its code panel: it imports what a consumer would
-import, uses the documented API convention (the dotted namespace for a
-complex component), and carries no story harness or argument plumbing.
+Each file is a complete, copy-pasteable composition, because the docs
+page prints it verbatim as the source under its demo: it imports what a
+consumer would import, uses the documented API convention (the dotted
+namespace for a complex component), and carries no story harness or
+argument plumbing.
 
-There is no `examples/index.ts`. A docs page imports each file by path
-twice — once as a component, once with `?raw` for the source panel — and
-Astro rejects a `client:load` island that came through a registry rather
-than a per-file import (`.scratch/rewrite-decisions.md`, "Docs framework:
-Nimbus"). A barrel would never be the thing imported.
+There is no `examples/index.ts`. A docs page imports each file by path,
+once, as a `client:load` island, and repeats the file in a fenced block
+beneath it; Astro rejects an island that came through a registry rather
+than a per-file import. The docs app's `check:demos` fails when a fence
+differs from its file, so editing an example means resyncing its page
+(`bun run check:demos --fix`). A barrel would never be the thing
+imported. The page itself is the `document-component` skill's job.
 
 Which cases a component owes is its tier's demo contract
 (`references/registry.md`, "Categories and tier"). A `{ComponentName}Demo.vue`
@@ -546,6 +549,9 @@ Verify each of these against the target (section 0) before using it.
     then its typecheck. A shared styles file sits outside the package, so
     lint it with the config that covers it (`acfatah/ui`: the root
     `bun run lint`).
+13. Document it: run `document-component` on the component directory
+    where the target has a Nimbus docs app. Infrastructure items get no
+    page.
 
 ## Best practices
 

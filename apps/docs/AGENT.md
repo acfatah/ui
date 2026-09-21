@@ -20,12 +20,16 @@ these win.
   `packages/vue/src/components/ui/<name>/_registry.ts`, via
   `src/lib/registry-sidebar.ts`; an item joins every group it lists. Never
   group by `meta.tier`.
-- **Component pages** live at `src/content/docs/components/<name>.mdx`. Per
+- **Component pages** live at `src/content/docs/components/<slug>.mdx`,
+  `<slug>` being the registry `name` after its last `/`. Per
   example: import it from
   `packages.vue/components/ui/<name>/examples/<Example>.vue` in the MDX
   file, render `<Demo><Example client:load /></Demo>`, then a fenced
   `vue` block identical to the example file. The fence is what reaches
-  agents: `index.md` and `llms-full.txt` strip every component.
+  agents: `index.md` and `llms-full.txt` strip every component. Write
+  pages with the `document-component` skill; `bun run check:demos` (part
+  of `lint`) fails on a fence that differs from its example, and
+  `--fix` resyncs it from the file.
 - **Islands are imported per file.** `client:*` on a component from the
   `src/components.ts` globals registry fails the build.
 - **`@/` resolves by importer** (`plugins/package-alias.ts`): inside
