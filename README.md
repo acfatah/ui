@@ -95,6 +95,57 @@ version of their own. `registryDependencies` are pinned.
 components. Interaction and accessibility assertions live in Vitest
 browser-mode tests driven by Playwright.
 
+**Test depth is tiered.** How deep a component's specs and demos go is
+bound to its behavioural surface, not decided per component. No Ark state
+machine is T1; a state machine rendered in flow is T2; a state machine
+plus a portal is T3; a composite or a high-surface, async or
+control-collection widget is T4. Each tier owes everything the one below
+owes, plus more.
+
+| Tier | What it is | What it owes |
+| --- | --- | --- |
+| T1 | single element or static composition | variant and size demos; no interaction spec |
+| T2 | state machine, renders in flow | state matrix, controlled vs uncontrolled, one primary-flow spec |
+| T3 | state machine plus `Teleport` + `Positioner` | T2, plus open, placement, dismiss, and asserting the teleported content rendered |
+| T4 | composite or heavy widget | T3, plus domain states, edge cases, one spec per core sub-flow |
+
+T1 to T3 are read off component source — a machine import, then
+`Positioner` with `Teleport`. Classify the portal from the source, never
+from whether a demo writes `Teleport`, because most overlays let Ark
+teleport at runtime. T4 is a judgement call in both halves and is never
+derived: importing one component does not make a component T4, since
+`command` imports `dialog` and is T3 *because* of it, inheriting that
+portal's focus trap. Declaring a tier higher than the source implies is
+allowed; declaring one lower is a defect, because it silently drops the
+specs that tier owes. A tier is assigned when a component is created,
+never retro-fitted.
+
+Component names used as examples here and below (`command`, `calendar`,
+`tooltip`) are from the predecessor, where the model was applied to all
+62 of its components. They are illustrations of the rule, not a claim
+that those components exist here yet.
+
+**Components declare `categories` and `meta.tier`.** Both live in
+`_registry.ts`. `categories` groups the documentation navigation — one or
+more of `form`, `actions`, `navigation`, `overlay`, `data-display`,
+`feedback`, `layout` — and membership is deliberately not exclusive, so
+`calendar` is both `form` and `data-display`. `meta.tier` is the tier
+above; it sits in `meta` because it is ours, not part of the shadcn
+schema.
+
+Neither ever appears in an item name. An install address is a public
+contract, and tiers move — the day a component starts composing another
+instead of re-implementing it, its tier can shift — so a tier in the name
+would make every reclassification a breaking rename.
+
+There is exactly one architecture ladder, and it is the tier. A second
+one (primitive / base / composite) was considered and rejected: the tier
+rule already reads as one, and two ladders give every component two
+labels with no rule for which governs. Documentation navigation reads
+`categories` only, never the tier — T3 "overlay" is a mechanism, not a
+domain, so `tooltip`, `dropdown-menu` and `navigation-menu` are all T3
+and belong in three different sidebar sections.
+
 ## Repository layout
 
 Partly built. Entries marked *planned* do not exist yet.

@@ -259,7 +259,7 @@ as a derivation.
   questions and only `categories` reaches the docs sidebar.
 
 Then check the declared tier's contract is actually met, per
-`.scratch/rewrite-decisions.md`, "Test depth by tier" — T2 owes a state
+the target's `README.md`, "Test depth is tiered" — T2 owes a state
 matrix and a primary-flow spec, T3 adds open, placement, dismiss and an
 assertion that the teleported content rendered, T4 adds domain states and
 edge cases. A tier declared correctly but not honoured is 🟨, graded like

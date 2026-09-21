@@ -36,7 +36,7 @@ export const registryItem = {
   meta: {
     /**
      * Test depth tier. Governs the spec and demo contract this component
-     * must meet. See `.scratch/rewrite-decisions.md`, "Test depth by tier".
+     * must meet. See README.md, "Test depth is tiered".
      *
      * T1: no Ark state machine, no portal. Variant and size demos only.
      */

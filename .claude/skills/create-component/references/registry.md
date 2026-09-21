@@ -95,8 +95,9 @@ justification; declaring one *lower* is the bug, because it silently
 drops the specs that tier owes.
 
 The tier is assigned when the component is created, never retro-fitted.
-Full model and the per-tier spec contract: `.scratch/rewrite-decisions.md`,
-"Test depth by tier".
+Full model and the per-tier spec contract: the target's own `README.md`,
+"Test depth is tiered" in `acfatah/ui`. The reasoning behind it may live
+outside the repository; the README is what travels with a clone.
 
 ## Shared styles
 
