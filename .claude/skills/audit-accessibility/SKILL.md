@@ -165,7 +165,12 @@ and `@storybook/addon-a11y` are gone, so say where the assertion would live.
   This skill still writes no test. Naming it is what makes the finding
   actionable.
 - Where the target already has an automated accessibility run, use it and say
-  so. Where it does not, report manually — check the target's `package.json`
+  so. In `acfatah/ui` that is `expectNoAxeViolations` from
+  `packages/vue/test/a11y.ts`, called inside a component's spec; a finding
+  axe can catch names that call and the state to render. The helper turns
+  `color-contrast` off because specs render without `global.css`, so
+  contrast stays a manual check against the real tokens here. Where the
+  target has no automated run, report manually — check its `package.json`
   scripts rather than inventing a command.
 
 ## Notes

@@ -198,6 +198,10 @@ Ensure imports follow the project's alphabetized order (enforced by ESLint):
 7. Run the target's typecheck to verify no type errors. A shared styles
    file sits outside the package, so lint it with the config that covers
    it (`acfatah/ui`: the root `bun run lint`).
+8. Where the target has `test-component` and `document-component`, run
+   them next: the spec to the re-derived tier, then the docs page. In
+   `acfatah/ui`, `check:props` fails the package lint until the migrated
+   component has a spec covering every public prop.
 
 ## Notes
 

@@ -93,8 +93,11 @@ two in every consumer's install.
 version of their own. `registryDependencies` are pinned.
 
 **No Storybook.** Documentation is an Astro site on [Nimbus][4] that
-imports the real components. Interaction and accessibility assertions live in Vitest
-browser-mode tests driven by Playwright.
+imports the real components. Interaction and accessibility assertions live
+in Vitest browser-mode tests driven by Playwright. Two checks replace what
+Storybook's addons did: `check:props` fails the package lint when a public
+prop is set by no spec, and specs assert accessibility with axe through
+`expectNoAxeViolations` (`packages/vue/test/a11y.ts`).
 
 **Test depth is tiered.** How deep a component's specs and demos go is
 bound to its behavioural surface, not decided per component. No Ark state

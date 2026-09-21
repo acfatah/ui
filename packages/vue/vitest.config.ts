@@ -45,7 +45,13 @@ export default defineConfig({
           alias: {
             '@': path.resolve(import.meta.dirname, './src'),
             '~shared': path.resolve(import.meta.dirname, '../../shared'),
+            '~test': path.resolve(import.meta.dirname, './test'),
           },
+        },
+        // Pre-bundle axe-core so the first browser run does not reload
+        // mid-test when Vite discovers it.
+        optimizeDeps: {
+          include: ['axe-core'],
         },
         test: {
           name: 'components',

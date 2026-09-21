@@ -214,7 +214,10 @@ Each is a question against the target, not an assertion about it.
 10. **Colocated `.spec.ts`.** Components are tested in Vitest browser mode,
     composables and lib modules in the plain node project. Absent where the
     siblings have one is 🟨; absent where no sibling has one is a note in
-    Overall suggestions, not a finding.
+    Overall suggestions, not a finding. Where the target has a `check:props`
+    script, run it and report its result instead of judging prop coverage
+    by eye; a spec written against the tier contract is `test-component`'s
+    job, so name it in the fix.
 11. **Categories and tier.** Applies only where the siblings carry these
     fields, and only to *component* items; a target that has not adopted
     them fails no check here, and neither does an infrastructure item.

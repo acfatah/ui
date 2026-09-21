@@ -84,7 +84,7 @@ components/ui/{component-name}/
 ├── {ComponentName}Item.vue    (if applicable)
 ├── {ComponentName}Content.vue (if applicable)
 ├── {ComponentName}Trigger.vue (if applicable)
-├── {ComponentName}.spec.ts    (never shipped)
+├── {ComponentName}.spec.ts    (never shipped; written by test-component)
 ├── examples/                  (never shipped)
 │   └── {ComponentName}{Case}.vue
 ├── index.ts
@@ -549,7 +549,10 @@ Verify each of these against the target (section 0) before using it.
     then its typecheck. A shared styles file sits outside the package, so
     lint it with the config that covers it (`acfatah/ui`: the root
     `bun run lint`).
-13. Document it: run `document-component` on the component directory
+13. Write the spec: run `test-component` on the component directory. It
+    writes `{ComponentName}.spec.ts` to the tier's contract; `check:props`
+    in the package's `lint` fails until every public prop is exercised.
+14. Document it: run `document-component` on the component directory
     where the target has a Nimbus docs app. Infrastructure items get no
     page.
 
