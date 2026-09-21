@@ -66,6 +66,11 @@ Replace `data-slot` with the two-attribute pattern:
   or a custom name for non-Ark components)
 - `data-part` = the sub-element role in kebab-case
 
+On an Ark machine part (`Accordion.ItemTrigger`), delete the pair
+instead: Zag sets both. A component wrapping a multi-part Ark machine is
+migrated to `create-component`'s `references/compound.md`, and meets its
+"Done" list.
+
 ### 2. Props interface
 
 Move inline prop types to a typed `Props` interface if not already done:
