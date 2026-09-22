@@ -74,9 +74,10 @@ Two metadata fields every component item carries.
 
 An item under `components/ui/` that is not itself a component takes no
 `categories` and no `meta.tier`. The icons indirection (`vue/icons`) is
-the standing example: a list of re-exports has no docs sidebar home, so
-a category would have to be invented, and no behavioural surface, so a
-tier would be meaningless. It ships no `.spec.ts` for the same reason.
+the standing example: a list of re-exports has no component page (its
+docs are a hand-listed Getting started guide), so a category would have
+to be invented, and no behavioural surface, so a tier would be
+meaningless. It ships no `.spec.ts` for the same reason.
 
 The test: does it render anything a reader could be shown, and does it
 have behaviour a spec could assert? Two noes means infrastructure. Say

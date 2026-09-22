@@ -28,7 +28,7 @@ const nimbusConfig = defineNimbusConfig({
     items: [
       {
         label: 'Getting started',
-        items: ['introduction', 'installation'],
+        items: ['introduction', 'installation', 'icons'],
       },
       {
         label: 'Theming',

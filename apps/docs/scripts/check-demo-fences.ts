@@ -1,5 +1,5 @@
 /**
- * Checks that every component page shows each example's source verbatim.
+ * Checks that every docs page shows each example's source verbatim.
  *
  * A page renders an example as an island inside `<Demo>` and repeats its
  * source in the fenced `vue` block right after `</Demo>`. The fence is what
@@ -21,7 +21,8 @@ import { componentSlug, readRegistryItems } from '../src/lib/registry-sidebar'
 
 const appDir = path.resolve(import.meta.dirname, '..')
 const repoDir = path.resolve(appDir, '../..')
-const pagesDir = path.join(appDir, 'src/content/docs/components')
+const docsDir = path.join(appDir, 'src/content/docs')
+const pagesDir = path.join(docsDir, 'components')
 const componentsDir = path.join(repoDir, 'packages/vue/src/components/ui')
 const fix = process.argv.includes('--fix')
 
@@ -215,12 +216,13 @@ function checkPage(file: string, documented: Set<string>) {
 }
 
 const documented = new Set<string>()
-const pages = existsSync(pagesDir)
-  ? readdirSync(pagesDir).filter(entry => entry.endsWith('.mdx'))
+const pages = existsSync(docsDir)
+  ? readdirSync(docsDir, { recursive: true, encoding: 'utf8' })
+      .filter(entry => entry.endsWith('.mdx'))
   : []
 
 for (const page of pages)
-  checkPage(path.join(pagesDir, page), documented)
+  checkPage(path.join(docsDir, page), documented)
 
 for (const [dir, item] of await readRegistryItems(componentsDir)) {
   if (!item.categories?.length)
