@@ -36,6 +36,23 @@
   --color-ring: var(--ring);
   --color-selection: var(--selection);
   --color-selection-foreground: var(--selection-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-text: var(--success-text);
+  --color-success-muted: var(--success-muted);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-text: var(--info-text);
+  --color-info-muted: var(--info-muted);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-text: var(--warning-text);
+  --color-warning-muted: var(--warning-muted);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-error-text: var(--error-text);
+  --color-error-muted: var(--error-muted);
 }
 
 :root {
@@ -61,6 +78,29 @@
   --ring: oklch(0.708 0 0);
   --selection: oklch(0.145 0 0);
   --selection-foreground: oklch(1 0 0);
+
+  /*
+    Status roles, from the Tailwind palette: the base is a fill,
+    `-foreground` is text on that fill, `-text` is the hue as text on a
+    neutral surface or on `-muted`, and `-muted` is a tinted surface.
+    Every text pairing clears 4.5:1.
+  */
+  --success: oklch(0.508 0.118 165.612);
+  --success-foreground: oklch(0.985 0 0);
+  --success-text: oklch(0.508 0.118 165.612);
+  --success-muted: oklch(0.979 0.021 166.113);
+  --info: oklch(0.546 0.245 262.881);
+  --info-foreground: oklch(0.985 0 0);
+  --info-text: oklch(0.488 0.243 264.376);
+  --info-muted: oklch(0.97 0.014 254.604);
+  --warning: oklch(0.555 0.163 48.998);
+  --warning-foreground: oklch(0.985 0 0);
+  --warning-text: oklch(0.473 0.137 46.201);
+  --warning-muted: oklch(0.987 0.022 95.277);
+  --error: var(--destructive);
+  --error-foreground: oklch(0.985 0 0);
+  --error-text: oklch(0.505 0.213 27.518);
+  --error-muted: oklch(0.971 0.013 17.38);
 }
 
 .dark {
@@ -85,6 +125,23 @@
   --ring: oklch(0.556 0 0);
   --selection: oklch(0.922 0 0);
   --selection-foreground: oklch(0.205 0 0);
+
+  --success: oklch(0.765 0.177 163.223);
+  --success-foreground: oklch(0.262 0.051 172.552);
+  --success-text: oklch(0.765 0.177 163.223);
+  --success-muted: oklch(0.262 0.051 172.552 / 50%);
+  --info: oklch(0.707 0.165 254.624);
+  --info-foreground: oklch(0.282 0.091 267.935);
+  --info-text: oklch(0.707 0.165 254.624);
+  --info-muted: oklch(0.282 0.091 267.935 / 50%);
+  --warning: oklch(0.828 0.189 84.429);
+  --warning-foreground: oklch(0.279 0.077 45.635);
+  --warning-text: oklch(0.828 0.189 84.429);
+  --warning-muted: oklch(0.279 0.077 45.635 / 50%);
+  --error: var(--destructive);
+  --error-foreground: oklch(0.258 0.092 26.042);
+  --error-text: oklch(0.704 0.191 22.216);
+  --error-muted: oklch(0.258 0.092 26.042 / 50%);
 }
 
 @layer base {

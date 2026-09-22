@@ -14,13 +14,13 @@ const { text, variant = "default", size = "small", class: className, ...attrs } 
 // note→info, tip→success, caution→warning: variant aliases
 const variantClass: Record<string, string> = {
   default: "bg-accent text-muted-foreground",
-  info:    "bg-info-muted text-info",
-  note:    "bg-info-muted text-info",
-  success: "bg-success-muted text-success",
-  tip:     "bg-success-muted text-success",
-  warning: "bg-warning-muted text-warning",
-  caution: "bg-warning-muted text-warning",
-  danger:  "bg-danger-muted text-danger",
+  info:    "bg-info-muted text-info-text",
+  note:    "bg-info-muted text-info-text",
+  success: "bg-success-muted text-success-text",
+  tip:     "bg-success-muted text-success-text",
+  warning: "bg-warning-muted text-warning-text",
+  caution: "bg-warning-muted text-warning-text",
+  danger:  "bg-error-muted text-error-text",
 };
 
 const sizeClass: Record<string, string> = {
