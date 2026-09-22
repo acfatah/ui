@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 </script>
 
 <template>
-  <Button variant="destructive">
-    Destructive
+  <Button variant="error">
+    Error
   </Button>
 </template>

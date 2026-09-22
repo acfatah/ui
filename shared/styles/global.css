@@ -30,7 +30,6 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -71,8 +70,8 @@
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.697 0.245 27.325);
+  /* shadcn compatibility alias for registry items outside this project. */
+  --destructive: var(--error);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
@@ -97,7 +96,7 @@
   --warning-foreground: oklch(0.985 0 0);
   --warning-text: oklch(0.473 0.137 46.201);
   --warning-muted: oklch(0.987 0.022 95.277);
-  --error: var(--destructive);
+  --error: oklch(0.577 0.245 27.325);
   --error-foreground: oklch(0.985 0 0);
   --error-text: oklch(0.505 0.213 27.518);
   --error-muted: oklch(0.971 0.013 17.38);
@@ -118,8 +117,7 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.371 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.704 0.191 22.216);
+  --destructive: var(--error);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
@@ -138,7 +136,7 @@
   --warning-foreground: oklch(0.279 0.077 45.635);
   --warning-text: oklch(0.828 0.189 84.429);
   --warning-muted: oklch(0.279 0.077 45.635 / 50%);
-  --error: var(--destructive);
+  --error: oklch(0.704 0.191 22.216);
   --error-foreground: oklch(0.258 0.092 26.042);
   --error-text: oklch(0.704 0.191 22.216);
   --error-muted: oklch(0.258 0.092 26.042 / 50%);

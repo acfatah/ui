@@ -1,0 +1,122 @@
+---
+title: Overview
+description: How the shared token layer themes every component, and how to change it.
+---
+
+Every component styles itself with Tailwind utilities such as `bg-primary`
+or `text-muted-foreground`. Those utilities resolve through one shared
+stylesheet, `global.css`, so changing a theme means changing CSS variables
+in one place, never editing a component.
+
+<Aside type="caution">
+  A component installed without `global.css` renders unstyled rather than
+  failing. If a component looks bare, check that the stylesheet is imported
+  by your Tailwind entry file.
+</Aside>
+
+## How the layer is built
+
+`global.css` has three parts:
+
+1. **Values.** `:root` holds the light theme and `.dark` the dark theme, as
+   plain CSS variables such as `--primary: oklch(0.205 0 0)`.
+2. **Mapping.** An `@theme inline` block exposes each variable to Tailwind
+   as a color, `--color-primary: var(--primary)`, which generates
+   `bg-primary`, `text-primary`, `border-primary` and the rest.
+3. **Base styles.** Every element defaults to `border-border` and
+   `outline-ring/50`, and text selection uses the `selection` pair.
+
+Because of `inline`, a utility reads the variable where it is used rather
+than a value fixed at `:root`, so a variable overridden on any element
+restyles everything inside it.
+
+```css
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+:root {
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+}
+```
+
+## Tokens
+
+Colors come in pairs: a surface and a `-foreground` for text and icons on
+that surface.
+
+| Token | Use |
+| --- | --- |
+| `background` / `foreground` | The page. |
+| `card` / `card-foreground` | Raised surfaces. |
+| `popover` / `popover-foreground` | Floating surfaces: menus, popovers. |
+| `primary` / `primary-foreground` | The main action. |
+| `secondary` / `secondary-foreground` | Lower-emphasis actions. |
+| `muted` / `muted-foreground` | Subdued surfaces and secondary text. |
+| `accent` / `accent-foreground` | Hover and highlighted items. |
+| `selection` / `selection-foreground` | Selected text. |
+| `border`, `input`, `ring` | Borders, form-control borders, focus rings. |
+| `success`, `info`, `warning`, `error` | Status colors, in four roles each. See [Status colors](/theming/status-colors). |
+
+`--radius` sets the corner scale: `rounded-sm`, `rounded-md`, `rounded-lg`
+and `rounded-xl` are `--radius` minus 4px, minus 2px, itself and plus 4px.
+
+## Dark mode
+
+Dark mode is class-based. Put `.dark` on an ancestor, usually `<html>`,
+and the `.dark` values apply to everything inside it. The `dark:` variant
+follows the same class:
+
+```css
+@custom-variant dark (&:is(.dark *));
+```
+
+- The variant matches **descendants** of `.dark`, not the element that
+  carries the class. With `.dark` on `<html>`, every element in the page
+  matches.
+- There is no automatic `prefers-color-scheme` fallback. Toggle the class
+  yourself, and set it before the first paint so the page does not flash
+  the light theme.
+
+```html
+<script>
+  const stored = localStorage.getItem('theme')
+  const system = matchMedia('(prefers-color-scheme: dark)').matches
+  document.documentElement.classList.toggle(
+    'dark',
+    stored ? stored === 'dark' : system,
+  )
+</script>
+```
+
+## Customize
+
+Override variables in your own stylesheet after `global.css`. Change a
+color in both `:root` and `.dark`, or the other mode keeps the old value.
+
+```css
+:root {
+  --radius: 0.5rem;
+  --primary: oklch(0.488 0.243 264.376);
+  --primary-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --primary: oklch(0.707 0.165 254.624);
+  --primary-foreground: oklch(0.282 0.091 267.935);
+}
+```
+
+- Keep every surface and foreground pair at a contrast ratio of 4.5:1 or
+  more.
+- To theme one region, set the variables on a wrapper element. Everything
+  inside picks them up.
+- Components that need tokens beyond this shared set ship them in their
+  own registry item, and the CLI adds them to your stylesheet on install.

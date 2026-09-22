@@ -1,0 +1,120 @@
+---
+title: Status colors
+description: Success, info, warning and error tokens, and how to pair them.
+---
+
+The shared token layer, `global.css`, defines four status colors,
+success, info, warning and error, next to the base shadcn tokens.
+Each is drawn from the Tailwind palette in OKLCH and comes in four roles,
+tuned separately for light and dark mode. They are themed like every
+other token; see [Overview](/theming/overview).
+
+<div class="not-prose my-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+  <div class="flex flex-col gap-2 rounded-lg border p-3">
+    <span class="rounded-md bg-success px-3 py-1.5 text-sm font-medium text-success-foreground">Success</span>
+    <span class="rounded-md bg-success-muted px-3 py-1.5 text-sm text-success-text">Soft</span>
+  </div>
+  <div class="flex flex-col gap-2 rounded-lg border p-3">
+    <span class="rounded-md bg-info px-3 py-1.5 text-sm font-medium text-info-foreground">Info</span>
+    <span class="rounded-md bg-info-muted px-3 py-1.5 text-sm text-info-text">Soft</span>
+  </div>
+  <div class="flex flex-col gap-2 rounded-lg border p-3">
+    <span class="rounded-md bg-warning px-3 py-1.5 text-sm font-medium text-warning-foreground">Warning</span>
+    <span class="rounded-md bg-warning-muted px-3 py-1.5 text-sm text-warning-text">Soft</span>
+  </div>
+  <div class="flex flex-col gap-2 rounded-lg border p-3">
+    <span class="rounded-md bg-error px-3 py-1.5 text-sm font-medium text-error-foreground">Error</span>
+    <span class="rounded-md bg-error-muted px-3 py-1.5 text-sm text-error-text">Soft</span>
+  </div>
+</div>
+
+## Roles
+
+| Token | Utility | Use |
+| --- | --- | --- |
+| `--success` | `bg-success` | Solid fill: buttons, filled badges, indicators. |
+| `--success-foreground` | `text-success-foreground` | Text and icons on the fill. |
+| `--success-text` | `text-success-text` | The hue as text on the page, a card or the tint. |
+| `--success-muted` | `bg-success-muted` | Tinted surface: alerts, soft badges, highlighted rows. |
+
+Info, warning and error follow the same pattern.
+
+<Aside type="note">
+  shadcn/ui names the error fill `--destructive`. It is kept as an alias,
+  `--destructive: var(--error)`, so registry items from elsewhere that use
+  `bg-destructive` or `text-destructive` still pick up the error color.
+  Theme `--error`, not the alias. `--destructive-foreground` is not
+  defined; use `--error-foreground`.
+</Aside>
+
+## Pairing
+
+Every text pairing below clears the WCAG AA ratio of 4.5:1 in both modes.
+
+```vue
+<template>
+  <!-- Filled -->
+  <span class="bg-success text-success-foreground">Saved</span>
+
+  <!-- Soft -->
+  <div class="bg-warning-muted text-warning-text">
+    Your trial ends in 3 days.
+  </div>
+
+  <!-- On a neutral surface -->
+  <p class="text-error-text">
+    Password is too short.
+  </p>
+</template>
+```
+
+<Aside type="caution">
+  `-foreground` is text **on the fill**, as `primary-foreground` is. Never
+  pair `text-success-foreground` with `bg-success-muted` or with the page
+  background, and never pair `text-success-text` with `bg-success`. Both
+  combinations are near-illegible.
+</Aside>
+
+For a border, mix the fill instead of adding a token:
+`border-success/20` or
+`border-[color-mix(in_oklch,var(--color-success)_20%,transparent)]`.
+
+## Values
+
+Light mode uses the 600 to 700 shades for fills with near-white text, the
+700 shades for text (800 for warning) and the 50 shades for tints. Dark
+mode switches to the 400 shades for fills and text, the 950 shades for
+text on the fill, and the 950 shades at 50% opacity for tints, so a tint
+blends with whichever surface sits under it.
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| Fill | emerald-700, blue-600, amber-700, red-600 | emerald-400, blue-400, amber-400, red-400 |
+| Foreground | `oklch(0.985 0 0)` | emerald-950, blue-950, amber-950, red-950 |
+| Text | emerald-700, blue-700, amber-800, red-700 | emerald-400, blue-400, amber-400, red-400 |
+| Muted | emerald-50, blue-50, amber-50, red-50 | the 950 shade at 50% |
+
+## Customize
+
+Override the variables after the shared layer, here with Tailwind green,, in `:root` for light mode
+and `.dark` for dark mode. Keep each pair's contrast at 4.5:1 or more.
+
+```css
+:root {
+  --success: oklch(0.448 0.119 151.328);
+  --success-text: oklch(0.448 0.119 151.328);
+  --success-muted: oklch(0.982 0.018 155.826);
+}
+
+.dark {
+  --success: oklch(0.792 0.209 151.711);
+  --success-foreground: oklch(0.266 0.065 152.934);
+  --success-text: oklch(0.792 0.209 151.711);
+  --success-muted: oklch(0.266 0.065 152.934 / 50%);
+}
+```
+
+## Components using them
+
+- [Button](/components/button): the `error`, `success`, `info` and
+  `warning` variants.

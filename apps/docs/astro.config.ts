@@ -30,6 +30,10 @@ const nimbusConfig = defineNimbusConfig({
         label: 'Getting started',
         items: ['introduction', 'installation'],
       },
+      {
+        label: 'Theming',
+        items: ['theming/overview', 'theming/status-colors'],
+      },
       ...(await registrySidebar(`${vueSrc}/components/ui`)),
     ],
   },
