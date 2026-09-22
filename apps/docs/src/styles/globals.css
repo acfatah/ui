@@ -56,23 +56,24 @@
 	--nb-selected: oklch(0.89 0 0);
 	--nb-ring: var(--ring);
 
-	/* Status colors — paired (saturated for text/border + muted for bg) */
-	--nb-info: oklch(0.45 0.18 255);
-	--nb-info-foreground: oklch(0.45 0.18 255);
-	--nb-info-muted: oklch(0.965 0.015 255);
+	/* Status colors — aliased onto the shared `-text` / `-muted` roles.
+	   Nimbus uses the base as text, border and stripe colour. */
+	--nb-info: var(--info-text);
+	--nb-info-foreground: var(--info-text);
+	--nb-info-muted: var(--info-muted);
 
-	--nb-success: oklch(0.42 0.14 152);
-	--nb-success-foreground: oklch(0.42 0.14 152);
-	--nb-success-muted: oklch(0.965 0.015 152);
+	--nb-success: var(--success-text);
+	--nb-success-foreground: var(--success-text);
+	--nb-success-muted: var(--success-muted);
 
-	--nb-warning: oklch(0.48 0.15 65);
-	--nb-warning-foreground: oklch(0.48 0.15 65);
-	--nb-warning-muted: oklch(0.97 0.02 70);
+	--nb-warning: var(--warning-text);
+	--nb-warning-foreground: var(--warning-text);
+	--nb-warning-muted: var(--warning-muted);
 
- 	--nb-danger: oklch(0.47 0.18 25);
- 	--nb-danger-foreground: oklch(0.47 0.18 25);
- 	--nb-danger-muted: oklch(0.965 0.015 25);
- 
+	--nb-danger: var(--error-text);
+	--nb-danger-foreground: var(--error-text);
+	--nb-danger-muted: var(--error-muted);
+
  	/* API method palette — shared source of truth for the method chip across the
  	   sidebar, endpoint card, and code rail (api-sidebar / api-layout /
  	   api-code-rail); harmless elsewhere. Calibrated OKLCH duotone: each value is
@@ -130,22 +131,6 @@
 	--nb-border-strong: oklch(0.371 0 0);
 	--nb-selected: oklch(0.371 0 0);
 
-	--nb-info: oklch(0.75 0.12 255);
-	--nb-info-foreground: oklch(0.75 0.12 255);
-	--nb-info-muted: oklch(0.17 0.03 260);
-
-	--nb-success: oklch(0.72 0.12 150);
-	--nb-success-foreground: oklch(0.72 0.12 150);
-	--nb-success-muted: oklch(0.17 0.025 153);
-
-	--nb-warning: oklch(0.78 0.11 80);
-	--nb-warning-foreground: oklch(0.78 0.11 80);
-	--nb-warning-muted: oklch(0.19 0.03 70);
-
- 	--nb-danger: oklch(0.72 0.14 25);
- 	--nb-danger-foreground: oklch(0.72 0.14 25);
- 	--nb-danger-muted: oklch(0.17 0.03 25);
- 
  	/* API method palette — dark overrides. */
  	--nb-m-get: oklch(0.82 0.14 162);
  	--nb-m-post: oklch(0.8 0.13 266);
@@ -167,22 +152,6 @@
 
 	--color-border-strong: var(--nb-border-strong);
 	--color-selected: var(--nb-selected);
-
-	--color-info: var(--nb-info);
-	--color-info-foreground: var(--nb-info-foreground);
-	--color-info-muted: var(--nb-info-muted);
-
-	--color-success: var(--nb-success);
-	--color-success-foreground: var(--nb-success-foreground);
-	--color-success-muted: var(--nb-success-muted);
-
-	--color-warning: var(--nb-warning);
-	--color-warning-foreground: var(--nb-warning-foreground);
-	--color-warning-muted: var(--nb-warning-muted);
-
-	--color-danger: var(--nb-danger);
-	--color-danger-foreground: var(--nb-danger-foreground);
-	--color-danger-muted: var(--nb-danger-muted);
 
 	--font-sans: var(--nb-font-sans);
 	--font-mono: var(--nb-font-mono);

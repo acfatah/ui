@@ -7,18 +7,18 @@ point on.
 
 ## Status
 
-**Pre-release. No components yet.**
+**Pre-release. No tagged version yet.**
 
 This repository is a from-scratch rewrite of
 [acfatah/shadcn-vue-ark][3], which remains the working registry until this
-one reaches parity. Nothing here is installable, and the commands below
-describe the intended interface, not a shipped one.
+one reaches parity. Items install from the default branch and may change
+between runs.
 
-What exists today is the conventions layer carried over from the previous
-repository — the agent skills in `.claude/skills/` — plus the workspace
-scaffold: `packages/vue/` for the Vue components, `shared/styles/` for
-the framework-free class strings and Tailwind token layer they share, and
-`apps/docs/`, the documentation site.
+`packages/vue/` holds the Vue components, `shared/styles/` the
+framework-free class strings and Tailwind token layer they share, and
+`apps/docs/` the documentation site. The root `registry.json` is generated
+from the colocated `_registry.ts` files by `bun run registry:build`; commit
+it with any change that affects an item.
 
 ## Requirements
 
@@ -28,12 +28,20 @@ the framework-free class strings and Tailwind token layer they share, and
 
 ## Install
 
-Once released, one setup item followed by the components you want:
+In a `create-vue` TypeScript project, first add `"paths": { "@/*":
+["./src/*"] }` to the root `tsconfig.json` `compilerOptions`. The shadcn
+CLI reads aliases from that file only, and `create-vue` declares them in
+`tsconfig.app.json`. Then one setup item, followed by the components you
+want:
 
 ```bash
 bunx --bun shadcn@latest add acfatah/ui/vue/project-setup
 bunx --bun shadcn@latest add acfatah/ui/vue/button
 ```
+
+Finally add `tailwindcss()` from `@tailwindcss/vite` to `vite.config.ts`
+and import `./styles/global.css` in `src/main.ts`. The docs site's
+Installation page has the full walkthrough.
 
 `npx shadcn@latest add ...` works the same way without Bun.
 
@@ -42,6 +50,9 @@ Pin a version with a tag or a commit SHA:
 ```bash
 bunx --bun shadcn@latest add acfatah/ui/vue/button#v0.1.0
 ```
+
+The ref applies to the named item only; its dependencies still install
+from the default branch until releases pin them.
 
 Inspect before writing anything:
 
@@ -123,6 +134,11 @@ portal's focus trap. Declaring a tier higher than the source implies is
 allowed; declaring one lower is a defect, because it silently drops the
 specs that tier owes. A tier is assigned when a component is created,
 never retro-fitted.
+
+Each tier has a reference component to copy from: `button` for T1 (a
+single element with variant and size axes) and `switch` for T2 (a
+multi-part Ark wrapper with prop and emit forwarding, a state matrix and
+one primary-flow spec). Their specs are the reference specs.
 
 Component names used as examples here and below (`command`, `calendar`,
 `tooltip`) are from the predecessor, where the model was applied to all

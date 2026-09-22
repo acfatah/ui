@@ -13,14 +13,16 @@
   "scripts": {
     "format": "bunx --bun eslint --fix",
     "format:changed": "{ git diff --name-only -z --diff-filter=d --relative HEAD; git ls-files -z --others --exclude-standard -- ':./'; } | xargs -0 -r bunx --bun eslint --fix --no-warn-ignored",
-    "lint": "bunx --bun eslint && bun run check:props",
+    "lint": "bunx --bun eslint && bun run check:props && bun run registry:check",
     "lint:changed": "{ git diff --name-only -z --diff-filter=d --relative HEAD; git ls-files -z --others --exclude-standard -- ':./'; } | xargs -0 -r bunx --bun eslint --pass-on-no-patterns --no-warn-ignored",
     "test": "vitest --run",
     "test:components": "vitest --run --project=components",
     "test:unit": "vitest --run --project=unit",
     "test:watch": "vitest",
     "typecheck": "vue-tsc --noEmit",
-    "check:props": "bun scripts/check-props-coverage.ts"
+    "check:props": "bun scripts/check-props-coverage.ts",
+    "registry:build": "bun scripts/registry/build.ts",
+    "registry:check": "bun scripts/registry/build.ts --check"
   },
   "dependencies": {
     "@ark-ui/vue": "^5.37.2",

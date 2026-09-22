@@ -5,8 +5,8 @@ export const buttonStyles = {
     focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50
     disabled:pointer-events-none disabled:opacity-50
     aria-disabled:pointer-events-none aria-disabled:opacity-50
-    aria-invalid:border-destructive aria-invalid:ring-destructive/20
-    dark:aria-invalid:ring-destructive/40
+    aria-invalid:border-error aria-invalid:ring-error/20
+    dark:aria-invalid:ring-error/40
     [&_svg]:pointer-events-none [&_svg]:shrink-0
     [&_svg:not([class*='size-'])]:size-4
   `,
@@ -20,12 +20,29 @@ export const buttonStyles = {
       bg-secondary text-secondary-foreground shadow-xs
       hover:bg-secondary/80
     `,
-    destructive: `
-      bg-destructive text-white shadow-xs
-      hover:bg-destructive/90
-      focus-visible:ring-destructive/20
-      dark:bg-destructive/60
-      dark:focus-visible:ring-destructive/40
+    error: `
+      bg-error text-error-foreground shadow-xs
+      hover:bg-[color-mix(in_oklch,var(--color-error)_85%,var(--color-foreground))]
+      focus-visible:ring-error/20
+      dark:focus-visible:ring-error/40
+    `,
+    success: `
+      bg-success text-success-foreground shadow-xs
+      hover:bg-[color-mix(in_oklch,var(--color-success)_85%,var(--color-foreground))]
+      focus-visible:ring-success/20
+      dark:focus-visible:ring-success/40
+    `,
+    info: `
+      bg-info text-info-foreground shadow-xs
+      hover:bg-[color-mix(in_oklch,var(--color-info)_85%,var(--color-foreground))]
+      focus-visible:ring-info/20
+      dark:focus-visible:ring-info/40
+    `,
+    warning: `
+      bg-warning text-warning-foreground shadow-xs
+      hover:bg-[color-mix(in_oklch,var(--color-warning)_85%,var(--color-foreground))]
+      focus-visible:ring-warning/20
+      dark:focus-visible:ring-warning/40
     `,
     outline: `
       border border-border bg-background shadow-xs

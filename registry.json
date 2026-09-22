@@ -1,0 +1,274 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "ui",
+  "homepage": "https://github.com/acfatah/ui",
+  "items": [
+    {
+      "name": "vue/project-setup",
+      "title": "Project Setup",
+      "description": "The shadcn config and shared token layer. Run once in a fresh Vue\nproject, before adding any component.",
+      "dependencies": [
+        "tailwindcss@^4.3.3"
+      ],
+      "devDependencies": [
+        "@tailwindcss/vite@^4.3.3"
+      ],
+      "files": [
+        {
+          "path": "packages/vue/src/setup/components.json",
+          "type": "registry:file",
+          "target": "~/components.json"
+        },
+        {
+          "path": "shared/styles/global.css",
+          "type": "registry:file",
+          "target": "~/src/styles/global.css"
+        }
+      ],
+      "type": "registry:item"
+    },
+    {
+      "name": "vue/button",
+      "title": "Button",
+      "description": "Displays a button or a component that looks like a button.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/factory\n- shadcn/ui: https://ui.shadcn.com/docs/components/button",
+      "dependencies": [
+        "@ark-ui/vue@^5.37.2",
+        "cn@0.3.0"
+      ],
+      "files": [
+        {
+          "path": "packages/vue/src/components/ui/button/Button.vue",
+          "type": "registry:ui",
+          "target": "@ui/button/Button.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/button/index.ts",
+          "type": "registry:ui",
+          "target": "@ui/button/index.ts"
+        },
+        {
+          "path": "packages/vue/src/components/ui/button/types.ts",
+          "type": "registry:ui",
+          "target": "@ui/button/types.ts"
+        },
+        {
+          "path": "shared/styles/components/ui/button/styles.ts",
+          "type": "registry:ui",
+          "target": "@ui/button/styles.ts"
+        }
+      ],
+      "meta": {
+        "tier": "T1"
+      },
+      "categories": [
+        "actions",
+        "form"
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "name": "vue/description",
+      "title": "Description",
+      "description": "Supporting text that gives a control, title or heading more context.\n\nOther components wrap it for their own description part, such as\n<code>Switch.Description</code>, so help text looks the same across the\nUI. Each wrapper sets its own <code>data-scope</code> and\n<code>data-part</code>.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/factory",
+      "dependencies": [
+        "@ark-ui/vue@^5.37.2",
+        "cn@0.3.0"
+      ],
+      "files": [
+        {
+          "path": "packages/vue/src/components/ui/description/Description.vue",
+          "type": "registry:ui",
+          "target": "@ui/description/Description.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/description/index.ts",
+          "type": "registry:ui",
+          "target": "@ui/description/index.ts"
+        },
+        {
+          "path": "packages/vue/src/components/ui/description/types.ts",
+          "type": "registry:ui",
+          "target": "@ui/description/types.ts"
+        },
+        {
+          "path": "shared/styles/components/ui/description/styles.ts",
+          "type": "registry:ui",
+          "target": "@ui/description/styles.ts"
+        }
+      ],
+      "meta": {
+        "tier": "T1"
+      },
+      "categories": [
+        "form"
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "name": "vue/icons",
+      "title": "Icons",
+      "description": "The single icon indirection. Components import every icon from here,\nnever from an icon package, so swapping icon sets is one edit.\n\nReferences:\n- Lucide: https://lucide.dev/guide/packages/lucide-vue",
+      "dependencies": [
+        "@lucide/vue@^1.47.0"
+      ],
+      "files": [
+        {
+          "path": "packages/vue/src/components/ui/icons/index.ts",
+          "type": "registry:ui",
+          "target": "@ui/icons/index.ts"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "name": "vue/label",
+      "title": "Label",
+      "description": "Renders an accessible label associated with controls.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/factory\n- shadcn/ui: https://ui.shadcn.com/docs/components/label",
+      "dependencies": [
+        "@ark-ui/vue@^5.37.2",
+        "cn@0.3.0"
+      ],
+      "files": [
+        {
+          "path": "packages/vue/src/components/ui/label/Label.vue",
+          "type": "registry:ui",
+          "target": "@ui/label/Label.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/label/index.ts",
+          "type": "registry:ui",
+          "target": "@ui/label/index.ts"
+        },
+        {
+          "path": "packages/vue/src/components/ui/label/types.ts",
+          "type": "registry:ui",
+          "target": "@ui/label/types.ts"
+        },
+        {
+          "path": "shared/styles/components/ui/label/styles.ts",
+          "type": "registry:ui",
+          "target": "@ui/label/styles.ts"
+        }
+      ],
+      "meta": {
+        "tier": "T1"
+      },
+      "categories": [
+        "form"
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "name": "vue/switch",
+      "title": "Switch",
+      "description": "A control that allows the user to toggle between checked and not checked.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/switch\n- shadcn/ui: https://ui.shadcn.com/docs/components/switch",
+      "dependencies": [
+        "@ark-ui/vue@^5.37.2",
+        "@vueuse/core@^14.3.0",
+        "cn@0.3.0"
+      ],
+      "registryDependencies": [
+        "acfatah/ui/vue/description",
+        "acfatah/ui/vue/label",
+        "acfatah/ui/vue/useForwardProps",
+        "acfatah/ui/vue/useForwardPropsEmits"
+      ],
+      "files": [
+        {
+          "path": "packages/vue/src/components/ui/switch/SwitchControl.vue",
+          "type": "registry:ui",
+          "target": "@ui/switch/SwitchControl.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/switch/SwitchDescription.vue",
+          "type": "registry:ui",
+          "target": "@ui/switch/SwitchDescription.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/switch/SwitchHiddenInput.vue",
+          "type": "registry:ui",
+          "target": "@ui/switch/SwitchHiddenInput.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/switch/SwitchLabel.vue",
+          "type": "registry:ui",
+          "target": "@ui/switch/SwitchLabel.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/switch/SwitchRoot.vue",
+          "type": "registry:ui",
+          "target": "@ui/switch/SwitchRoot.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/switch/SwitchThumb.vue",
+          "type": "registry:ui",
+          "target": "@ui/switch/SwitchThumb.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/switch/index.ts",
+          "type": "registry:ui",
+          "target": "@ui/switch/index.ts"
+        },
+        {
+          "path": "packages/vue/src/components/ui/switch/namespace.ts",
+          "type": "registry:ui",
+          "target": "@ui/switch/namespace.ts"
+        },
+        {
+          "path": "packages/vue/src/components/ui/switch/types.ts",
+          "type": "registry:ui",
+          "target": "@ui/switch/types.ts"
+        },
+        {
+          "path": "shared/styles/components/ui/switch/styles.ts",
+          "type": "registry:ui",
+          "target": "@ui/switch/styles.ts"
+        }
+      ],
+      "meta": {
+        "tier": "T2"
+      },
+      "categories": [
+        "form"
+      ],
+      "type": "registry:ui"
+    },
+    {
+      "name": "vue/useEmitAsProps",
+      "files": [
+        {
+          "path": "packages/vue/src/composables/useEmitAsProps.ts",
+          "type": "registry:hook",
+          "target": "@hooks/useEmitAsProps.ts"
+        }
+      ],
+      "type": "registry:hook"
+    },
+    {
+      "name": "vue/useForwardProps",
+      "files": [
+        {
+          "path": "packages/vue/src/composables/useForwardProps.ts",
+          "type": "registry:hook",
+          "target": "@hooks/useForwardProps.ts"
+        }
+      ],
+      "type": "registry:hook"
+    },
+    {
+      "name": "vue/useForwardPropsEmits",
+      "registryDependencies": [
+        "acfatah/ui/vue/useEmitAsProps",
+        "acfatah/ui/vue/useForwardProps"
+      ],
+      "files": [
+        {
+          "path": "packages/vue/src/composables/useForwardPropsEmits.ts",
+          "type": "registry:hook",
+          "target": "@hooks/useForwardPropsEmits.ts"
+        }
+      ],
+      "type": "registry:hook"
+    }
+  ]
+}

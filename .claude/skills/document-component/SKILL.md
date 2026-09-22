@@ -25,7 +25,8 @@ Write nothing until every item below is settled.
    `packages/vue/src/components/ui/button`. If missing, ask.
 2. **Read its `_registry.ts`**: `name`, `title`, `description`,
    `categories`, `meta.tier`. An item with no `categories` is
-   infrastructure (`vue/icons`) and has no page — say so and stop.
+   infrastructure (`vue/icons`) and has no component page — say so and
+   stop.
 3. **Find the docs app**: from the repository root,
    `ls apps/*/nimbus.json`. No match means the target has no Nimbus docs
    site (the predecessor, `shadcn-vue-ark`, runs Starlight) — stop.

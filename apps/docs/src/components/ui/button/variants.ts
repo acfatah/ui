@@ -30,9 +30,9 @@ export const buttonVariantClasses: Record<ButtonVariant, string> = {
   secondary:
     "bg-card text-foreground ring ring-border shadow-sm hover:bg-accent hover:ring-border-strong",
   ghost: "bg-transparent text-foreground shadow-none hover:bg-accent",
-  destructive: "bg-danger text-white shadow-sm hover:bg-danger/90",
+  destructive: "bg-error text-error-foreground shadow-sm hover:bg-error/90",
   "secondary-destructive":
-    "bg-card text-danger ring ring-border shadow-sm hover:bg-accent hover:ring-danger/40",
+    "bg-card text-error-text ring ring-border shadow-sm hover:bg-accent hover:ring-error/40",
   outline:
     "bg-transparent text-foreground ring ring-border hover:ring-border-strong",
 };

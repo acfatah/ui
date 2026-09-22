@@ -6,7 +6,10 @@ description: Displays a button or a component that looks like a button.
 import ButtonDemo from "packages.vue/components/ui/button/examples/ButtonDemo.vue";
 import ButtonDefault from "packages.vue/components/ui/button/examples/ButtonDefault.vue";
 import ButtonSecondary from "packages.vue/components/ui/button/examples/ButtonSecondary.vue";
-import ButtonDestructive from "packages.vue/components/ui/button/examples/ButtonDestructive.vue";
+import ButtonError from "packages.vue/components/ui/button/examples/ButtonError.vue";
+import ButtonSuccess from "packages.vue/components/ui/button/examples/ButtonSuccess.vue";
+import ButtonInfo from "packages.vue/components/ui/button/examples/ButtonInfo.vue";
+import ButtonWarning from "packages.vue/components/ui/button/examples/ButtonWarning.vue";
 import ButtonOutline from "packages.vue/components/ui/button/examples/ButtonOutline.vue";
 import ButtonGhost from "packages.vue/components/ui/button/examples/ButtonGhost.vue";
 import ButtonLink from "packages.vue/components/ui/button/examples/ButtonLink.vue";
@@ -202,13 +205,21 @@ import { Button } from '@/components/ui/button'
 </template>
 ```
 
-### Destructive
+### Error
 
-`bg-destructive` with destructive focus-ring tones; for irreversible
-actions.
+The error fill, `bg-error` with `text-error-foreground` and matching
+focus-ring tones; for irreversible actions such as deleting data. Like the
+other status variants below, hover shifts the fill towards the page
+foreground, which keeps the label's contrast rather than lowering it.
+The tokens are described in [Status colors](/theming/status-colors).
+
+<Aside type="note">
+  shadcn/ui calls this variant `destructive`. Here the variants share the
+  status token names: `error`, `success`, `info` and `warning`.
+</Aside>
 
 <Demo>
-  <ButtonDestructive client:load />
+  <ButtonError client:load />
 </Demo>
 
 ```vue
@@ -217,8 +228,71 @@ import { Button } from '@/components/ui/button'
 </script>
 
 <template>
-  <Button variant="destructive">
-    Destructive
+  <Button variant="error">
+    Error
+  </Button>
+</template>
+```
+
+### Success
+
+The success fill, `bg-success` with `text-success-foreground`, for
+confirming or completing an action.
+
+<Demo>
+  <ButtonSuccess client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <Button variant="success">
+    Success
+  </Button>
+</template>
+```
+
+### Info
+
+The info fill, `bg-info` with `text-info-foreground`, for neutral,
+informational actions that should still stand out.
+
+<Demo>
+  <ButtonInfo client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <Button variant="info">
+    Info
+  </Button>
+</template>
+```
+
+### Warning
+
+The warning fill, `bg-warning` with `text-warning-foreground`, for
+actions that deserve a second look before the user commits.
+
+<Demo>
+  <ButtonWarning client:load />
+</Demo>
+
+```vue
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+</script>
+
+<template>
+  <Button variant="warning">
+    Warning
   </Button>
 </template>
 ```

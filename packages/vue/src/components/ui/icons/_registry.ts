@@ -26,9 +26,10 @@ export const registryItem = {
 
   /*
     No `categories` and no `meta.tier`, both of which are otherwise
-    required. This is infrastructure, not a component: it has no docs
-    sidebar home and no behavioural surface to test, so a category would
-    be invented and a tier would be meaningless. It also ships no
+    required. This is infrastructure, not a component: it has no
+    component page (the docs cover it as a Getting started guide) and no
+    behavioural surface to test, so a category would be invented and a
+    tier would be meaningless. It also ships no
     `.spec.ts` for the same reason - a list of re-exports has nothing to
     assert beyond what the compiler already checks.
   */

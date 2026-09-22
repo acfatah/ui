@@ -29,7 +29,7 @@ export const registryItem = {
     {
       path: 'shared/styles/components/ui/button/styles.ts',
       type: 'registry:ui',
-      target: 'components/ui/button/styles.ts',
+      target: '@ui/button/styles.ts',
     },
   ],
 

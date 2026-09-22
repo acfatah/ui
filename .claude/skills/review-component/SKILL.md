@@ -154,7 +154,11 @@ Each is a question against the target, not an assertion about it.
    owned by the `resync-component-types` skill: flag it, do not fix it.
 2. **`data-scope` / `data-part`.** Present on every rendered part, both
    kebab-case, `data-scope` the component name and `data-part` the
-   sub-element role. No legacy `data-slot` survivors.
+   sub-element role. No legacy `data-slot` survivors. An Ark machine part
+   (`Switch.Control`) gets both from Zag, so its template correctly
+   carries neither; hand-written ones belong on the `ark.*` factory,
+   native elements, and parts Ark does not render
+   (`create-component`'s `references/compound.md`).
 3. **`_registry.ts`.** Metadata only — files and import-derived dependencies
    are scanned automatically. A `src/composables/*` or `src/lib/*` path in
    `files[]` makes the build throw: 🟥. Custom CSS (a `@utility` class,

@@ -17,6 +17,7 @@ playbooks live in `references/` (read them when you reach that step).
 | `context.ts` (shared state) | `references/context.md` |
 | `_registry.ts` (manifest) | `references/registry.md` |
 | `Props`/`Emits` interfaces | `references/props-emits.md` |
+| Multi-part Ark machine (T2 and up) | `references/compound.md` |
 
 ## 0. Establish the target
 
@@ -74,6 +75,11 @@ This skill is repo-agnostic. It writes nothing until it knows where.
 
 Examples below use `@/` as the alias and `src/components/ui/<name>/` as the
 component root because both repositories use them. Verify, don't assume.
+
+**Copy from the reference component for your tier** where the target has
+one (its `README.md` names them). In `acfatah/ui`: `button` for T1,
+`switch` for T2. A component wrapping a multi-part Ark machine follows
+`references/compound.md`, which explains what the T2 reference does.
 
 ## Directory structure
 
@@ -156,8 +162,6 @@ const delegatedProps = reactiveOmit(props, 'class')
 
 <template>
   <{ArkComponent}.{Part}
-    data-scope="{component-name-kebab}"
-    data-part="{part-name-kebab}"
     v-bind="forwardedProps"
     :class="cn({componentName}{Part}Styles, props.class)"
   >
@@ -166,9 +170,11 @@ const delegatedProps = reactiveOmit(props, 'class')
 </template>
 ```
 
-For non-Ark components, add `data-scope` (component name, kebab-case) and
-`data-part` (sub-element role, kebab-case) attributes. Replace any legacy
-`data-slot` with `data-scope` / `data-part`.
+An Ark machine part (`Switch.Control`) gets `data-scope` and `data-part`
+from Zag. Everything else carries the pair by hand: the `ark.*` factory
+(`ark.button`), a native element, and a part Ark does not render. Use the
+component name and the sub-element role, both kebab-case. Replace any
+legacy `data-slot` with the pair.
 
 For the full `Props`/`Emits` scaffolding (Ark-backed vs native-wrapper cases),
 see `references/props-emits.md`.
@@ -534,7 +540,8 @@ Verify each of these against the target (section 0) before using it.
    the one-line re-export in the component directory. In a colocated
    target: `styles.ts` in the component directory.
 5. Create `types.ts` (`references/props-emits.md` for the interfaces)
-6. Create the `.vue` files
+6. Create the `.vue` files. For a multi-part Ark machine, follow
+   `references/compound.md` and meet its "Done" list
 7. Create `context.ts` if it needs shared state (`references/context.md`)
 8. Create `index.ts`
 9. Create `namespace.ts` if complex (`references/namespace.md`)

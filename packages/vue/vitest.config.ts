@@ -25,6 +25,7 @@ export default defineConfig({
           alias: {
             '@': path.resolve(import.meta.dirname, './src'),
             '~shared': path.resolve(import.meta.dirname, '../../shared'),
+            '~test': path.resolve(import.meta.dirname, './test'),
           },
         },
         test: {
@@ -33,6 +34,7 @@ export default defineConfig({
           include: [
             'src/composables/**/*.spec.ts',
             'src/lib/**/*.spec.ts',
+            'scripts/**/*.spec.ts',
           ],
         },
       },
@@ -48,10 +50,15 @@ export default defineConfig({
             '~test': path.resolve(import.meta.dirname, './test'),
           },
         },
-        // Pre-bundle axe-core so the first browser run does not reload
-        // mid-test when Vite discovers it.
+        // Pre-bundle axe-core and each Ark subpath a component imports, so
+        // the first browser run does not reload mid-test when Vite
+        // discovers one. A reload mid-run leaves Ark on a second copy of
+        // Vue and every test fails with "reading 'ce'".
         optimizeDeps: {
-          include: ['axe-core'],
+          include: [
+            '@ark-ui/vue/switch',
+            'axe-core',
+          ],
         },
         test: {
           name: 'components',

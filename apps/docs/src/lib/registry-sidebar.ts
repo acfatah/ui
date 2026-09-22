@@ -53,7 +53,8 @@ export async function readRegistryItems(componentsDir: string) {
  * Component groups built from every `_registry.ts` under `componentsDir`.
  * An item joins one group per category, so membership is not exclusive.
  * Items without `categories` are infrastructure (e.g. `vue/icons`) and get
- * no page. Each link points at `components/<name without framework>`.
+ * no generated page. Each link points at
+ * `components/<name without framework>`.
  */
 export async function registrySidebar(componentsDir: string) {
   const items = [...(await readRegistryItems(componentsDir)).values()]
