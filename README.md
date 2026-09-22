@@ -51,6 +51,9 @@ Pin a version with a tag or a commit SHA:
 bunx --bun shadcn@latest add acfatah/ui/vue/button#v0.1.0
 ```
 
+The ref applies to the named item only; its dependencies still install
+from the default branch until releases pin them.
+
 Inspect before writing anything:
 
 ```bash
