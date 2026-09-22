@@ -47,11 +47,12 @@ omit it entirely. The two cases are a component-local stylesheet shipped
 with an explicit `registry:file` type, and a shared styles file (see
 "Shared styles").
 
-> The concrete implementation of this model — the build scripts, the
-> generated dependency addresses and the thrown error text — is documented
-> in the registry repository's own `docs/`, verified there against
-> `shadcn@4.11.0`. Reconcile against that repo if the behaviour surprises
-> you.
+> The concrete implementation of this model is
+> `packages/vue/scripts/registry/build.ts`, with its rules pinned by
+> `build.spec.ts` beside it. Npm dependencies are versioned from
+> `packages/vue/package.json`; an import the package does not declare
+> throws. Composables ship as `registry:hook` items with `@hooks/`
+> targets, landing in the consumer's `aliases.hooks` (`@/composables`).
 
 ## Item names
 
@@ -151,7 +152,7 @@ shared source directory (`acfatah/ui`: `~shared/*` → `shared/`).
     {
       path: 'shared/styles/components/ui/accordion/styles.ts',
       type: 'registry:ui',
-      target: 'components/ui/accordion/styles.ts',
+      target: '@ui/accordion/styles.ts',
     },
   ],
   ```
@@ -159,16 +160,21 @@ shared source directory (`acfatah/ui`: `~shared/*` → `shared/`).
 - **An alias import is never a dependency.** It resolves to source that
   is copied, not to an npm package or another item.
 
-Until the build CLI exists and enforces this, state the intended entry
-explicitly as above. Once it derives the entry from the re-export, drop
-the explicit `files[]` and follow the build. Where `target` lands in a
-consumer's project is verified from CLI source only; confirm with
-`shadcn add … --dry-run` against a pushed branch before relying on it.
+The build (`packages/vue/scripts/registry/build.ts`) enforces this: it
+throws when a re-export has no matching `files[]` entry, when the
+`target` is not `@ui/<dir>/styles.ts`, and when any other shipped file
+imports `~shared/*`. Every `target` uses the `@ui/` alias form so it
+lands in the consumer's `aliases.ui`; verified against `shadcn@4.21.0`
+by installing into a fresh `create-vue` project.
+
+After changing any `_registry.ts`, run `bun run registry:build` and
+commit the regenerated root `registry.json`. `lint` fails while it is
+stale.
 
 ## Rules
 
 - `_registry.ts` carries metadata only (see above), plus the shared
-  styles entry while the build cannot derive it.
+  styles entry, which the build checks but does not derive.
 - `name` carries the target's framework prefix (see "Item names").
 - `categories` and `meta.tier` are both required on a *component* item
   (see "Categories and tier"). A component item with neither is

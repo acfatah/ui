@@ -34,6 +34,7 @@ export default defineConfig({
           include: [
             'src/composables/**/*.spec.ts',
             'src/lib/**/*.spec.ts',
+            'scripts/**/*.spec.ts',
           ],
         },
       },

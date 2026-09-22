@@ -29,7 +29,7 @@ export const registryItem = {
     {
       path: 'shared/styles/components/ui/switch/styles.ts',
       type: 'registry:ui',
-      target: 'components/ui/switch/styles.ts',
+      target: '@ui/switch/styles.ts',
     },
   ],
 

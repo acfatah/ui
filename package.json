@@ -13,7 +13,8 @@
     "format": "bunx --bun eslint --fix shared && bun run --filter './packages/*' --filter './apps/*' format",
     "typecheck": "bun run --filter './packages/*' --filter './apps/*' typecheck",
     "docs:dev": "bun run --filter apps.docs dev",
-    "docs:build": "bun run --filter apps.docs build"
+    "docs:build": "bun run --filter apps.docs build",
+    "registry:build": "bun run --filter packages.vue registry:build"
   },
   "devDependencies": {
     "@acfatah/eslint-preset": "^5.0.0",

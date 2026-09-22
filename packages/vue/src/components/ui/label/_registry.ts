@@ -28,7 +28,7 @@ export const registryItem = {
     {
       path: 'shared/styles/components/ui/label/styles.ts',
       type: 'registry:ui',
-      target: 'components/ui/label/styles.ts',
+      target: '@ui/label/styles.ts',
     },
   ],
 

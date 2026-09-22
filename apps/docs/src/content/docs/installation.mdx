@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: Add the project setup item, then the components you want.
+description: Start from create-vue, add the project setup item, then the components you want.
 ---
 
 ## Requirements
@@ -9,14 +9,92 @@ description: Add the project setup item, then the components you want.
 - Vue 3.5 or newer.
 - Tailwind CSS v4.
 
-## Install
+<Aside type="caution">
+  Pre-release, with no tagged version yet. Installs come from the default
+  branch and may change between runs.
+</Aside>
 
-One setup item, followed by the components you want:
+## 1. Create a Vue project
+
+```bash
+bun create vue@latest my-app
+cd my-app
+bun install
+```
+
+Answer yes to TypeScript. The other prompts do not matter here.
+
+## 2. Expose the `@/` alias to the shadcn CLI
+
+The CLI resolves `components.json` aliases from the root `tsconfig.json`
+only. `create-vue` declares `paths` in `tsconfig.app.json`, so add them to
+the root file as well:
+
+```json title="tsconfig.json"
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.app.json" }
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+Without this, the CLI writes components into a literal `@/` directory at the
+project root.
+
+## 3. Add the project setup item
 
 ```bash
 bunx --bun shadcn@latest add acfatah/ui/vue/project-setup
+```
+
+This writes `components.json` and `src/styles/global.css`, and installs
+`tailwindcss` and `@tailwindcss/vite`. Run it once, before any component.
+
+## 4. Wire up Tailwind
+
+The CLI does not edit build config. Add the Vite plugin next to `vue()`,
+keeping the rest of the scaffold's config:
+
+```ts title="vite.config.ts"
+import tailwindcss from '@tailwindcss/vite'
+import vue from '@vitejs/plugin-vue'
+import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    tailwindcss(),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+})
+```
+
+Then import the token layer in place of the scaffold's stylesheet:
+
+```ts title="src/main.ts"
+import './styles/global.css'
+```
+
+## 5. Add components
+
+```bash
 bunx --bun shadcn@latest add acfatah/ui/vue/button
 ```
+
+Components land in `src/components/ui/`, and composables they use land in
+`src/composables/`. Dependencies between items install automatically.
 
 `npx shadcn@latest add ...` works the same way without Bun.
 

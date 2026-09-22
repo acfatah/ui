@@ -32,7 +32,7 @@ export const registryItem = {
     {
       path: 'shared/styles/components/ui/description/styles.ts',
       type: 'registry:ui',
-      target: 'components/ui/description/styles.ts',
+      target: '@ui/description/styles.ts',
     },
   ],
 
