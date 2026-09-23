@@ -30,7 +30,7 @@
     {
       "name": "vue/button",
       "title": "Button",
-      "description": "Displays a button or a component that looks like a button.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/factory\n- shadcn/ui: https://ui.shadcn.com/docs/components/button",
+      "description": "Displays a button or a component that looks like a button.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/guides/composition#the-ark-factory\n- shadcn/ui: https://ui.shadcn.com/docs/components/button",
       "dependencies": [
         "@ark-ui/vue@^5.37.2",
         "cn@0.3.0"
@@ -69,7 +69,7 @@
     {
       "name": "vue/description",
       "title": "Description",
-      "description": "Supporting text that gives a control, title or heading more context.\n\nOther components wrap it for their own description part, such as\n<code>Switch.Description</code>, so help text looks the same across the\nUI. Each wrapper sets its own <code>data-scope</code> and\n<code>data-part</code>.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/factory",
+      "description": "Supporting text that gives a control, title or heading more context.\n\nOther components wrap it for their own description part, such as\n<code>Switch.Description</code>, so help text looks the same across the\nUI. Each wrapper sets its own <code>data-scope</code> and\n<code>data-part</code>.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/guides/composition#the-ark-factory",
       "dependencies": [
         "@ark-ui/vue@^5.37.2",
         "cn@0.3.0"
@@ -123,7 +123,7 @@
     {
       "name": "vue/label",
       "title": "Label",
-      "description": "Renders an accessible label associated with controls.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/factory\n- shadcn/ui: https://ui.shadcn.com/docs/components/label",
+      "description": "Renders an accessible label associated with controls.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/guides/composition#the-ark-factory\n- shadcn/ui: https://ui.shadcn.com/docs/components/label",
       "dependencies": [
         "@ark-ui/vue@^5.37.2",
         "cn@0.3.0"

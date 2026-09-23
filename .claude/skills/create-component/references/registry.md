@@ -256,6 +256,14 @@ Note the `vue/` prefix, `cn` in `dependencies` and no icon package, even
 though this component renders a chevron. In a shared-styles target, add
 the `files[]` entry from "Shared styles" above.
 
+`Headless API` points at the Ark page the component is built on. A
+machine component has `https://ark-ui.com/docs/components/<name>`. A
+component built only on the bare `ark.*` factory (`ark.button`,
+`ark.label`) has no component page; use
+`https://ark-ui.com/docs/guides/composition#the-ark-factory`.
+`/docs/components/factory` does not exist. Check that every URL, and
+every `#anchor`, resolves before committing.
+
 ## Component-owned CSS (utilities, keyframes, tokens)
 
 If a component depends on custom CSS, that CSS is the component's own concern:

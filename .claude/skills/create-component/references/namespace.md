@@ -107,7 +107,7 @@ export const RadioGroup = {
   /**
    * RadioGroupRootProvider component
    *
-   * See: https://ark-ui.com/docs/components/radio-group#using-the-root-provider
+   * See: https://ark-ui.com/docs/components/radio-group#root-provider
    */
   RootProvider: RadioGroupRootProvider,
 }

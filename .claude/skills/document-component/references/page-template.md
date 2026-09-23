@@ -86,7 +86,7 @@ The `default` variant at the default size.
 
 ## References
 
-- [Ark UI factory](https://ark-ui.com/docs/components/factory)
+- [Ark UI factory](https://ark-ui.com/docs/guides/composition#the-ark-factory)
 - [shadcn/ui Button](https://ui.shadcn.com/docs/components/button)
 {/* From the `References:` list in the registry description, as links
     titled by what they are. */}

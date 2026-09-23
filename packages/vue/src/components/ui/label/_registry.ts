@@ -11,7 +11,7 @@ export const registryItem = {
     Renders an accessible label associated with controls.
 
     References:
-    - Headless API: https://ark-ui.com/docs/components/factory
+    - Headless API: https://ark-ui.com/docs/guides/composition#the-ark-factory
     - shadcn/ui: https://ui.shadcn.com/docs/components/label
   `,
 

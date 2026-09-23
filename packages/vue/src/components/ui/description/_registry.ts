@@ -16,7 +16,7 @@ export const registryItem = {
     <code>data-part</code>.
 
     References:
-    - Headless API: https://ark-ui.com/docs/components/factory
+    - Headless API: https://ark-ui.com/docs/guides/composition#the-ark-factory
   `,
 
   categories: [
