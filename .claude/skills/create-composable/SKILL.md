@@ -264,12 +264,18 @@ wrongly is the failure mode these modules actually have.
    root.
 9. Regenerate the registry if the target generates one
    (`acfatah/ui`: `bun run registry:build`, then `registry:check`).
+   It rewrites `docs/component-graph.md` alongside `registry.json` —
+   stage both, or the next `registry:check` fails.
 
 **Done** means the spec passes in the unit project, typecheck is clean,
 and the registry check passes. In `acfatah/ui` run the unit project alone
-with `bunx vitest --run --project=unit`; `bun run test` also runs the
-browser `components` project. In `shadcn-vue-ark`, `bun run test` is
-already unit-only.
+with `bun run test:unit`; plain `bun run test` also starts the browser
+`components` project. In `shadcn-vue-ark`, `bun run test` is already
+unit-only.
+
+`registry:build` prints `Wrote …` whether or not the contents changed, so
+read `registry:check` or `git status`, not that line, to tell whether
+anything is stale.
 
 ## Notes
 
