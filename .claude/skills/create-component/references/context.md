@@ -18,7 +18,7 @@ Create a `context.ts` when:
 ```ts
 import type { ComputedRef } from 'vue'
 
-import { createContext } from '@/lib/createContext'
+import { createContext } from './createContext'
 
 export interface TooltipOptions {
   hideArrow?: boolean
@@ -27,6 +27,12 @@ export interface TooltipOptions {
 export const [TooltipOptionsProvider, useTooltipOptions]
   = createContext<ComputedRef<TooltipOptions>>('TooltipOptions')
 ```
+
+`createContext` is a helper. In `acfatah/ui`, whose registry build does not
+package `src/lib/`, it lives inline as `createContext.ts` beside
+`context.ts` and ships with the component. Import it from
+`@/lib/createContext` only in a target whose build packages `src/lib/`
+(`shadcn-vue-ark`). See `create-composable`, section 2.
 
 ## Usage in Root component
 

@@ -1,6 +1,6 @@
 ---
 name: create-composable
-description: Author a Vue composable (src/composables/use*.ts) or a pure helper (src/lib/*.ts) in a shadcn registry — directory routing, full TS types, JSDoc, attribution, a colocated spec, and the barrel export. Takes the target package directory as an argument. Manual invocation only.
+description: Author a Vue composable (src/composables/use*.ts) or a pure helper (src/lib/*.ts, or inline in its component when the build does not package lib) in a shadcn registry — routing, full TS types, JSDoc, attribution, a colocated spec, and the barrel export. Takes the target package directory as an argument. Manual invocation only.
 disable-model-invocation: true
 argument-hint: "[target-dir] [moduleName]"
 ---
@@ -26,13 +26,25 @@ This skill is repo-agnostic. It writes nothing until it knows where.
    ls <target>/src/lib/
    cat <target>/tsconfig.json      # confirm the @/ alias
    grep -rh "name:" <target>/src --include=_registry.ts | head -3
+   grep -rn "composables\|lib" <target>/scripts/registry/ 2>/dev/null
    ```
 
-   The last line settles the **item-name prefix**. A target laid out per
-   framework (`acfatah/ui`: `packages/vue`) names every item
+   The `name:` line settles the **item-name prefix**. A target laid out
+   per framework (`acfatah/ui`: `packages/vue`) names every item
    `<framework>/<name>`, as in `vue/button`; a single-framework target
    (`shadcn-vue-ark`) uses bare names. Composables and libs follow the
    same prefix as the components beside them.
+
+   The build-script grep settles **whether `src/lib/` is packaged** and
+   which item type composables get. Today:
+
+   | | `acfatah/ui` | `shadcn-vue-ark` |
+   |---|---|---|
+   | Composable item type | `registry:hook`, target `@hooks/…` | `registry:file` |
+   | `src/lib/` packaged | **no** — `@/lib/x` fails the build | yes, `<name>-lib` |
+   | `@/composables` barrel import | fails the build | pulls in every module |
+
+   If the target has no build script to read, ask rather than guess.
 
 3. **Read the target repo's own `CLAUDE.md`, `README.md` and `docs/`** if
    present, walking up from the target to the repository root. A
@@ -59,24 +71,46 @@ is present regardless.
 
 ## 2. Which directory
 
-| | `src/composables/` | `src/lib/` |
-|---|---|---|
-| Holds | reactivity or lifecycle | pure functions, factories |
-| Test | calls into Vue's reactivity, or `getCurrentInstance` / `onMounted` / `provide` | neither |
-| File name | camelCase, `use<Thing>.ts` | kebab-case, `<thing>.ts` |
-| Export | named, matches the file name | named, matches the file name |
-| Registry item | camelCase, `registry:file` | `<name>-lib`, `registry:lib` |
+First question: does it touch Vue's reactivity, or call
+`getCurrentInstance` / `onMounted` / `provide`? Then it is a composable
+and goes to `src/composables/`. Otherwise it is a pure helper, and where
+it goes depends on whether the target's build packages `src/lib/` (§0).
 
-Both item names take the target's framework prefix where it has one
-(§0): `vue/useForwardProps`, `vue/format-bytes-lib`.
+| | `src/composables/` | `src/lib/` | inline in the component |
+|---|---|---|---|
+| When | reactive or lifecycle | pure, **and** the build packages `src/lib/` | pure, and it does not (`acfatah/ui`) |
+| File | camelCase, `use<Thing>.ts` | kebab-case, `<thing>.ts` | `src/components/ui/<dir>/<thing>.ts` |
+| Export | named, matches the file | named, matches the file | named, matches the file |
+| Imported as | `@/composables/useThing` | `@/lib/thing` | `./thing` |
+| Registry item | own item, per the build (§0) | own item, `<name>-lib` | none — ships with the component |
+
+Composable and lib item names take the target's framework prefix where it
+has one (§0): `vue/useForwardProps`.
+
+`src/composables/` is `use*` only. A factory or a pure helper never goes
+there, even when it feels like part of the same family — `createContext`
+and `dynamic` are helpers, not composables.
+
+### Inline helpers (`acfatah/ui`)
+
+`acfatah/ui` does not package `src/lib/` yet, so a helper lives inside the
+one component that needs it. The build ships every non-spec file in the
+component directory as `registry:ui`, so it needs no `files[]` entry and
+no registry item. Relative imports may not leave that directory — the
+build rejects them.
+
+A helper that only a composable needs goes in the composable's own file,
+unexported. Non-`use*` files in `src/composables/` are not items and do
+not ship.
+
+A **second** consumer is the signal to teach the build to package
+`src/lib/`, not to copy the helper into a second component.
+
+### `src/lib/` (`shadcn-vue-ark`)
 
 The case asymmetry is real and load-bearing: `useForwardProps.ts` sits
 beside `format-bytes.ts`. Match the directory, not the neighbouring
 directory.
-
-`src/composables/` is `use*` only. A factory or a pure helper goes to
-`src/lib/` even when it feels like part of the same family —
-`createContext` and `dynamic` are helpers, not composables.
 
 > Known misfiling, do not copy: `shadcn-vue-ark` has
 > `src/lib/use-fetch.ts`, which is reactive and belongs in
@@ -131,22 +165,25 @@ attribution block naming the project and linking the upstream file:
 ```
 
 Licence hygiene, and it tells the next reader where to check for upstream
-fixes. Live example: `src/composables/useForwardProps.ts` in
-`shadcn-vue-ark`.
+fixes. Live example: `packages/vue/src/composables/useForwardProps.ts` in
+`acfatah/ui`.
 
 ## 4. Registry packaging
 
-Each module is published as **its own registry item**, generated from the
-directory — there is no per-module `_registry.ts` to write.
+Each composable (and, where the build packages it, each lib module) is
+published as **its own registry item**, generated from the directory —
+there is no per-module `_registry.ts` to write. An inline helper (§2) is
+not an item; it ships as part of its component.
 
-Three consequences:
+Consequences:
 
 - **The filename is the registry address.** `@/composables/useForwardProps`
-  becomes `<owner>/<repo>/<prefix>useForwardProps`; `@/lib/utils` becomes
-  `<owner>/<repo>/<prefix>utils-lib`, where `<prefix>` is the framework
-  segment from §0 or empty. In `acfatah/ui` that is
+  becomes `<owner>/<repo>/<prefix>useForwardProps`, where `<prefix>` is
+  the framework segment from §0 or empty. In `acfatah/ui` that is
   `acfatah/ui/vue/useForwardProps`. Renaming the file is a breaking change
   for every consumer who pinned it.
+- **The item type is the build's call** (§0): `registry:hook` targeting
+  `@hooks/…` in `acfatah/ui`, `registry:file` in `shadcn-vue-ark`.
 - **A module is framework code, even a pure one.** Everything under a
   framework package gets that framework's prefix. A helper that genuinely
   has no framework in it still lives here until a second framework needs
@@ -164,9 +201,12 @@ Three consequences:
   import { useExample } from '@/composables'              // ✗ the barrel
   ```
 
-  The import scanner maps a path to an item. The barrel is its own item, so
-  importing it pulls every module in the directory into the consumer's
-  install.
+  The import scanner maps a path to an item. In `acfatah/ui` the barrel
+  maps to nothing and the build fails; in `shadcn-vue-ark` the barrel is
+  its own item and pulls every module into the consumer's install.
+- **The registry is generated.** Adding a composable adds an item, so
+  regenerate it (`acfatah/ui`: `bun run registry:build`, checked by
+  `bun run registry:check`, which fails when `registry.json` is stale).
 
 Full packaging model: `create-component`'s `references/registry.md`.
 
@@ -179,8 +219,9 @@ the named export, alphabetized among its neighbours:
 export { useExample } from './useExample'
 ```
 
-The barrel is for the repository's own convenience. It is not how a
-component reaches the module — see the direct-path rule above.
+`acfatah/ui` has no barrel; skip this step there. The barrel is for the
+repository's own convenience. It is not how a component reaches the
+module — see the direct-path rule above.
 
 ## 6. Test
 
@@ -192,14 +233,19 @@ src/composables/
 └── useExample.spec.ts
 ```
 
+An inline helper gets `<thing>.spec.ts` beside it in the component
+directory; the build never ships `*.spec.ts`.
+
 Plain Vitest, the `unit` project. Browser mode is for components, which
 need a real DOM for focus, portals and ARIA; a composable is logic and does
 not.
 
-Shapes to copy: `src/composables/runIfFn.spec.ts` (pure function, including
-`@ts-expect-error` cases for the type surface),
-`src/composables/useForwardProps.spec.ts` (needs a mounted instance),
-`src/lib/format-bytes.spec.ts`.
+Shapes to copy, in `acfatah/ui` (`packages/vue/src/composables/`):
+`useForwardProps.spec.ts` and `useForwardPropsEmits.spec.ts` (need a
+mounted instance), `useEmitAsProps.spec.ts`. In `shadcn-vue-ark`
+(`packages/registry/src/`): `composables/runIfFn.spec.ts` (pure function,
+including `@ts-expect-error` cases for the type surface),
+`lib/format-bytes.spec.ts`.
 
 Cover the type surface too, not just the runtime — a generic that infers
 wrongly is the failure mode these modules actually have.
@@ -208,7 +254,7 @@ wrongly is the failure mode these modules actually have.
 
 1. Establish the target and discover what it has (section 0).
 2. Decide it needs writing at all (section 1).
-3. Route to `src/composables/` or `src/lib/` (section 2).
+3. Route to `src/composables/`, `src/lib/`, or inline (section 2).
 4. Write the module with full types, JSDoc, and attribution if ported.
 5. Write the colocated `.spec.ts`.
 6. Add the barrel export if the target has one.
@@ -216,9 +262,14 @@ wrongly is the failure mode these modules actually have.
 8. Run the target's formatter and typecheck over the new files — commonly
    `bun run format <path>` and `bun run typecheck` from the target package
    root.
+9. Regenerate the registry if the target generates one
+   (`acfatah/ui`: `bun run registry:build`, then `registry:check`).
 
-**Done** means the spec passes (`bun run test`, or the target's equivalent
-unit project) and typecheck is clean.
+**Done** means the spec passes in the unit project, typecheck is clean,
+and the registry check passes. In `acfatah/ui` run the unit project alone
+with `bunx vitest --run --project=unit`; `bun run test` also runs the
+browser `components` project. In `shadcn-vue-ark`, `bun run test` is
+already unit-only.
 
 ## Notes
 

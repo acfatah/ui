@@ -463,10 +463,11 @@ Full RadioGroup template: `references/namespace.md`.
 ## 8. _registry.ts pattern
 
 Each component has a metadata-only manifest. Files and `import`-derived
-dependencies are scanned automatically. NEVER list composables or lib files
-in `files[]` (the build throws). Any custom CSS the component needs (a
-`@utility` class, `@keyframes`, or a `--animate-*` / theme token) ships via
-`cssVars` + `css` so it installs with the component.
+dependencies are scanned automatically. NEVER list composables or lib files in
+`files[]` (the build throws). An inline helper in the component directory ships
+automatically; it does not go in `files[]` either. Any custom CSS the component
+needs (a `@utility` class, `@keyframes`, or a `--animate-*` / theme token) ships
+via `cssVars` + `css` so it installs with the component.
 
 Two fields are not derivable and must be written: `categories` (the docs
 grouping, from the target's own set) and `meta.tier` (the test-depth
@@ -489,10 +490,14 @@ Verify each of these against the target (section 0) before using it.
 - Class name merging: `import { cn } from 'cn'` — the npm package, not a
   local `lib/utils` re-export
 - Composables (`use*` only): `@/composables/useForwardPropsEmits`,
-  `@/composables/useForwardProps`, `@/composables/useForwardExpose`
-- Helpers: `@/lib/createContext`. Pure factories and functions live in
-  `src/lib/`, not `src/composables/` — see the `create-composable` skill
-- Dynamic/asChild: `import { Dynamic } from '@/lib/dynamic'`
+  `@/composables/useForwardProps` — whichever the target has
+  (`shadcn-vue-ark` also has `useForwardExpose`; `acfatah/ui` does not)
+- Helpers (`createContext`, `dynamic`, other pure factories): never in
+  `src/composables/`. Import from `@/lib/…` only when the target's build
+  packages `src/lib/` (`shadcn-vue-ark`). Otherwise the helper lives inline
+  in the component directory and is imported relatively, e.g.
+  `import { createContext } from './createContext'` (`acfatah/ui`, whose
+  build rejects `@/lib/…`). See the `create-composable` skill, section 2
 - Styles: `./styles`, always, in the SFC, `types.ts` and `index.ts`. In a
   shared-directory target only the one-line re-export imports the alias
 - **Icons: `@/components/ui/icons` only.** No component imports an icon

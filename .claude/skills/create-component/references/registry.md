@@ -42,6 +42,10 @@ files into the install. Listing it in `files[]` as well double-ships the
 same file and goes stale when the component stops importing it — so the
 build **throws** if a `files[]` entry points at a composable or lib path.
 
+`acfatah/ui` packages no `src/lib/` at all: an `@/lib/…` import fails the
+build. A pure helper lives inline in the component directory instead and
+ships with the component like any other file there — no `files[]` entry.
+
 `files[]` is only for files the scanner cannot see. That is rare; usually
 omit it entirely. The two cases are a component-local stylesheet shipped
 with an explicit `registry:file` type, and a shared styles file (see
@@ -181,6 +185,7 @@ stale.
   incomplete. An infrastructure item such as `vue/icons` carries neither
   by rule — see "Infrastructure items carry neither".
 - Never list a composable or lib path in `files[]`. The build throws.
+  An inline helper in the component directory ships on its own.
 - Never list a `.spec.ts` or anything under `examples/` in `files[]`.
   See "Never an item file".
 - `dependencies` is only for npm packages the import scanner cannot infer
