@@ -269,6 +269,44 @@
         }
       ],
       "type": "registry:hook"
+    },
+    {
+      "name": "vue/agent-skill",
+      "title": "Agent Skill",
+      "description": "A Claude Code skill that teaches the project's AI agent how to use the\ninstalled components: the conventions, and a usage reference per\ncomponent. Installs to .claude/skills/vue-ui/.",
+      "files": [
+        {
+          "path": "skills/vue-ui/SKILL.md",
+          "type": "registry:file",
+          "target": "~/.claude/skills/vue-ui/SKILL.md"
+        },
+        {
+          "path": "skills/vue-ui/references/button.md",
+          "type": "registry:file",
+          "target": "~/.claude/skills/vue-ui/references/button.md"
+        },
+        {
+          "path": "skills/vue-ui/references/description.md",
+          "type": "registry:file",
+          "target": "~/.claude/skills/vue-ui/references/description.md"
+        },
+        {
+          "path": "skills/vue-ui/references/icons.md",
+          "type": "registry:file",
+          "target": "~/.claude/skills/vue-ui/references/icons.md"
+        },
+        {
+          "path": "skills/vue-ui/references/label.md",
+          "type": "registry:file",
+          "target": "~/.claude/skills/vue-ui/references/label.md"
+        },
+        {
+          "path": "skills/vue-ui/references/switch.md",
+          "type": "registry:file",
+          "target": "~/.claude/skills/vue-ui/references/switch.md"
+        }
+      ],
+      "type": "registry:item"
     }
   ]
 }

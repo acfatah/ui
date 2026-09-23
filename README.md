@@ -179,7 +179,8 @@ and belong in three different sidebar sections.
 ## Repository layout
 
 Partly built. Entries marked *planned* do not exist yet; *generated* ones
-are written by `bun run registry:build` and are not edited by hand.
+are written by `bun run registry:build` or `bun run skill:build` and are
+not edited by hand.
 
 ```
 apps/
@@ -196,6 +197,8 @@ packages/
     docs/          generated Component graph, written by the registry build
 docs/              planned  Context documents, decisions, conventions
 .claude/skills/             Authoring and review skills for agents
+skills/vue-ui/              Consumer agent skill, shipped as vue/agent-skill
+  references/    generated  One usage reference per docs page (skill:build)
 registry.json    generated  Consumer entry point, at the repository root
 ```
 

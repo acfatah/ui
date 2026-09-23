@@ -14,7 +14,8 @@
     "typecheck": "bun run --filter './packages/*' --filter './apps/*' typecheck",
     "docs:dev": "bun run --filter apps.docs dev",
     "docs:build": "bun run --filter apps.docs build",
-    "registry:build": "bun run --filter packages.vue registry:build"
+    "registry:build": "bun run --filter packages.vue registry:build",
+    "skill:build": "bun run --filter apps.docs skill:build"
   },
   "devDependencies": {
     "@acfatah/eslint-preset": "^5.0.0",
