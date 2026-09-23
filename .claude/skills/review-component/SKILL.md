@@ -233,7 +233,13 @@ Only where the target uses `meta.tier` (established in §0 from the
 siblings). This check exists because its failure is a **false ✅**: a
 component whose declared tier is too low is never *reported* as
 under-tested, it is simply never asked for the specs that tier owes.
-Nothing else in this review would catch it.
+
+Where the target's registry build carries a tier gate — `acfatah/ui`
+does, in `packages/vue/scripts/registry/build.ts` — the T1 to T3 floor
+is already enforced at build, so derive the tier here only to read the
+build's finding back, and spend the review on what no build can check:
+whether the tier's **spec contract** is actually met. A target without
+such a gate has nothing but this section.
 
 **First, is this a component at all?** An item under `components/ui/`
 that renders nothing a reader could be shown and has no behaviour a spec
@@ -253,12 +259,15 @@ Derive the tier from the component source, then compare:
 | Boundary | Evidence in source | Mechanical? |
 | --- | --- | --- |
 | T1 to T2 | an Ark machine import (`@ark-ui/vue/<machine>`), or a `use*Context` call | yes |
-| T2 to T3 | `Positioner` together with `Teleport` | yes |
+| T2 to T3 | a `Positioner`, or a `Teleport` | yes |
 | T3 to T4 | assembles several components into a larger widget, or is high-surface / async / a control collection | **no** |
 
 Read the portal off the source, never off a demo — most overlays let Ark
 teleport at runtime, so a demo that does not mention `Teleport` is not
-evidence of anything.
+evidence of anything. That runtime teleport is also why either marker
+counts on its own: in the predecessor, `dialog`, `drawer`, `sheet` and
+`navigation-menu` are T3 and render a `Positioner` with no `Teleport`
+anywhere, four of its twelve portal components.
 
 **Derive only T1 to T3.** T4 is a judgement call in both halves, so it is
 never derived and a T4 declaration is never contradicted. Importing one
@@ -270,6 +279,9 @@ as a derivation.
 
 - Declared **lower** than derived, within T1 to T3: 🟧. State both tiers
   and name the specs the real tier owes that the component does not have.
+  Where the build gates tiers, this cannot reach a review unless the
+  component is unbuilt — `bun run registry:check` would have failed — so
+  finding one means running that check and reporting why it passed.
 - Declared **higher** than derived: not a finding. That is the T4
   judgement call and the deliberate boundary calls (`input`, `calendar`,
   `range-calendar`) the tier model preserves. Do not "correct" it down.

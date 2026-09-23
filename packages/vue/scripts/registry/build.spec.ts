@@ -13,8 +13,13 @@ function write(file: string, content: string) {
   writeFileSync(full, content)
 }
 
-function manifest(name: string, files: object[] = []) {
-  return `export default ${JSON.stringify({ type: 'registry:ui', name, files })}\n`
+function manifest(name: string, files: object[] = [], extra: object = {}) {
+  return `export default ${JSON.stringify({ type: 'registry:ui', name, files, ...extra })}\n`
+}
+
+/** The pair a component declares. Fixtures without it are infrastructure. */
+function tier(value: string, categories = ['actions']) {
+  return { categories, meta: { tier: value } }
 }
 
 const BUTTON_STYLES = {
@@ -23,7 +28,7 @@ const BUTTON_STYLES = {
   target: '@ui/button/styles.ts',
 }
 
-function build() {
+function buildAll() {
   return buildRegistry({
     rootDir: root,
     packageDir: path.join(root, 'packages/vue'),
@@ -32,6 +37,14 @@ function build() {
     name: 'ui',
     homepage: 'https://github.com/acme/ui',
   })
+}
+
+async function build() {
+  return (await buildAll()).registry
+}
+
+async function graph() {
+  return (await buildAll()).graph
 }
 
 function item(registry: Awaited<ReturnType<typeof build>>, name: string) {
@@ -148,5 +161,254 @@ describe('buildRegistry', () => {
     })}\n`)
 
     await expect(build()).rejects.toThrow(/needs a '~\/\.\.\.' target/)
+  })
+})
+
+/** Rewrites the button fixture's manifest with the component field pair. */
+function buttonTier(value: string) {
+  write(
+    'packages/vue/src/components/ui/button/_registry.ts',
+    manifest('vue/button', [BUTTON_STYLES], tier(value)),
+  )
+}
+
+/** A portal component: an Ark machine, a Positioner and a Teleport. */
+function writePopover(declared: string) {
+  const ui = 'packages/vue/src/components/ui/popover'
+  write(`${ui}/_registry.ts`, manifest('vue/popover', [], tier(declared, ['overlay'])))
+  write(`${ui}/PopoverContent.vue`, [
+    '<script setup lang="ts">',
+    `import { Popover } from '@ark-ui/vue/popover'`,
+    '</script>',
+    '',
+    '<template>',
+    '  <Teleport to="body">',
+    '    <Popover.Positioner>',
+    '      <slot />',
+    '    </Popover.Positioner>',
+    '  </Teleport>',
+    '</template>',
+  ].join('\n'))
+}
+
+describe('tier gate', () => {
+  it('passes when the declared tier matches the source', async () => {
+    buttonTier('T1')
+
+    await expect(build()).resolves.toBeDefined()
+  })
+
+  it('fails when the declared tier is lower than the source implies', async () => {
+    buttonTier('T1')
+    write('packages/vue/src/components/ui/button/types.ts', [
+      `import { Switch } from '@ark-ui/vue/switch'`,
+      'export interface ButtonProps { switch?: typeof Switch }',
+    ].join('\n'))
+
+    await expect(build()).rejects.toThrow(/meta\.tier is 'T1' but the source derives T2 \(an Ark machine import/)
+  })
+
+  it('reads the bare Ark barrel by binding, so the factory stays T1', async () => {
+    buttonTier('T1')
+
+    await expect(build()).resolves.toBeDefined()
+
+    write('packages/vue/src/components/ui/button/types.ts', [
+      `import { Switch } from '@ark-ui/vue'`,
+      'export interface ButtonProps { switch?: typeof Switch }',
+    ].join('\n'))
+
+    await expect(build()).rejects.toThrow(/'Switch' imported from the '@ark-ui\/vue' barrel/)
+  })
+
+  it('counts a machine reached through a re-export', async () => {
+    buttonTier('T1')
+    write(
+      'packages/vue/src/components/ui/button/index.ts',
+      `export { useSwitch } from '@ark-ui/vue/switch'\n`,
+    )
+
+    await expect(build()).rejects.toThrow(/derives T2/)
+  })
+
+  it('counts a use*Context() call', async () => {
+    buttonTier('T1')
+    write('packages/vue/src/components/ui/button/types.ts', [
+      'declare function useSwitchContext(): { checked: boolean }',
+      'export const state = useSwitchContext()',
+    ].join('\n'))
+
+    await expect(build()).rejects.toThrow(/a useSwitchContext\(\) call/)
+  })
+
+  it('reads a Positioner off the template', async () => {
+    writePopover('T2')
+
+    await expect(build()).rejects.toThrow(/meta\.tier is 'T2' but the source derives T3 \(a Positioner in PopoverContent\.vue\)/)
+  })
+
+  // Ark teleports at runtime, so the predecessor's `dialog`, `drawer`,
+  // `sheet` and `navigation-menu` are all T3 with no `Teleport` in sight.
+  it('reads a Positioner that is never wrapped in a Teleport', async () => {
+    const ui = 'packages/vue/src/components/ui/popover'
+    write(`${ui}/_registry.ts`, manifest('vue/popover', [], tier('T2', ['overlay'])))
+    write(`${ui}/PopoverContent.vue`, [
+      '<script setup lang="ts">',
+      `import { Popover } from '@ark-ui/vue/popover'`,
+      '</script>',
+      '',
+      '<template>',
+      '  <Popover.Positioner><slot /></Popover.Positioner>',
+      '</template>',
+    ].join('\n'))
+
+    await expect(build()).rejects.toThrow(/derives T3 \(a Positioner/)
+  })
+
+  it('reads a Teleport that uses no Positioner', async () => {
+    const ui = 'packages/vue/src/components/ui/popover'
+    write(`${ui}/_registry.ts`, manifest('vue/popover', [], tier('T2', ['overlay'])))
+    write(`${ui}/PopoverContent.vue`, [
+      '<template>',
+      '  <Teleport to="body"><slot /></Teleport>',
+      '</template>',
+    ].join('\n'))
+
+    await expect(build()).rejects.toThrow(/derives T3 \(a Teleport/)
+  })
+
+  it('ignores evidence that only a spec or an example carries', async () => {
+    buttonTier('T1')
+    write(
+      'packages/vue/src/components/ui/button/Button.spec.ts',
+      `import { Switch } from '@ark-ui/vue/switch'\n`,
+    )
+    write('packages/vue/src/components/ui/button/examples/Demo.vue', [
+      '<template>',
+      '  <Teleport to="body"><Popover.Positioner /></Teleport>',
+      '</template>',
+    ].join('\n'))
+
+    await expect(build()).resolves.toBeDefined()
+  })
+
+  it('allows T4, the judgement call, on a source that derives T1', async () => {
+    buttonTier('T4')
+
+    await expect(build()).resolves.toBeDefined()
+  })
+
+  it('allows any other tier above the derived one', async () => {
+    buttonTier('T3')
+
+    await expect(build()).resolves.toBeDefined()
+  })
+
+  it('inherits the derived tier of a component it imports', async () => {
+    writePopover('T3')
+    buttonTier('T1')
+    write(
+      'packages/vue/src/components/ui/button/types.ts',
+      `import '@/components/ui/popover'\nexport interface ButtonProps {}\n`,
+    )
+
+    await expect(build()).rejects.toThrow(/derives T3 \(inherited from vue\/popover, T3\)/)
+  })
+
+  it('caps inheritance at T3, so a T4 judgement call does not propagate', async () => {
+    writePopover('T4')
+    buttonTier('T3')
+    write(
+      'packages/vue/src/components/ui/button/types.ts',
+      `import '@/components/ui/popover'\nexport interface ButtonProps {}\n`,
+    )
+
+    await expect(build()).resolves.toBeDefined()
+  })
+
+  it('terminates on an import cycle', async () => {
+    writePopover('T3')
+    buttonTier('T1')
+    write(
+      'packages/vue/src/components/ui/button/types.ts',
+      `import '@/components/ui/popover'\nexport interface ButtonProps {}\n`,
+    )
+    write(
+      'packages/vue/src/components/ui/popover/types.ts',
+      `import '@/components/ui/button'\nexport interface PopoverProps {}\n`,
+    )
+
+    await expect(build()).rejects.toThrow(/derives T3/)
+  })
+
+  it('exempts an infrastructure item carrying neither field', async () => {
+    const ui = 'packages/vue/src/components/ui/icons'
+    write(`${ui}/_registry.ts`, manifest('vue/icons'))
+    write(`${ui}/index.ts`, `export { X } from '@lucide/vue'\n`)
+    write('packages/vue/package.json', JSON.stringify({
+      dependencies: { 'cn': '0.3.0', '@ark-ui/vue': '^5.0.0', '@lucide/vue': '^1.0.0', 'vue': '^3.5.0' },
+    }))
+
+    await expect(build()).resolves.toBeDefined()
+  })
+
+  it('fails when categories is declared without meta.tier', async () => {
+    write(
+      'packages/vue/src/components/ui/button/_registry.ts',
+      manifest('vue/button', [BUTTON_STYLES], { categories: ['actions'] }),
+    )
+
+    await expect(build()).rejects.toThrow(/has categories but no meta\.tier/)
+  })
+
+  it('fails when meta.tier is declared without categories', async () => {
+    write(
+      'packages/vue/src/components/ui/button/_registry.ts',
+      manifest('vue/button', [BUTTON_STYLES], { meta: { tier: 'T1' } }),
+    )
+
+    await expect(build()).rejects.toThrow(/has meta\.tier but no categories/)
+  })
+
+  it('fails on an unrecognised tier value', async () => {
+    buttonTier('T5')
+
+    await expect(build()).rejects.toThrow(/expected one of T1, T2, T3, T4/)
+  })
+})
+
+describe('component graph', () => {
+  it('gives every component a row with both tiers', async () => {
+    buttonTier('T1')
+
+    expect(await graph()).toContain('| `vue/button` | T1 | T1 |')
+  })
+
+  it('records composition in both directions', async () => {
+    writePopover('T3')
+    buttonTier('T3')
+    write(
+      'packages/vue/src/components/ui/button/types.ts',
+      `import '@/components/ui/popover'\nexport interface ButtonProps {}\n`,
+    )
+
+    const rows = (await graph()).split('\n')
+
+    expect(rows.find(row => row.startsWith('| `vue/button`'))).toContain('`vue/popover`')
+    expect(rows.find(row => row.startsWith('| `vue/popover`'))).toContain('| `vue/button` |')
+  })
+
+  it('shows em dashes for an infrastructure item', async () => {
+    const ui = 'packages/vue/src/components/ui/icons'
+    write(`${ui}/_registry.ts`, manifest('vue/icons'))
+    write(`${ui}/index.ts`, 'export const icons = {}\n')
+
+    expect(await graph()).toContain('| `vue/icons` | — | — | — | — |')
+  })
+
+  it('is deterministic', async () => {
+    buttonTier('T1')
+
+    expect(await graph()).toBe(await graph())
   })
 })

@@ -123,19 +123,27 @@ owes, plus more.
 | --- | --- | --- |
 | T1 | single element or static composition | variant and size demos; no interaction spec |
 | T2 | state machine, renders in flow | state matrix, controlled vs uncontrolled, one primary-flow spec |
-| T3 | state machine plus `Teleport` + `Positioner` | T2, plus open, placement, dismiss, and asserting the teleported content rendered |
+| T3 | state machine plus a portal (`Positioner` or `Teleport`) | T2, plus open, placement, dismiss, and asserting the teleported content rendered |
 | T4 | composite or heavy widget | T3, plus domain states, edge cases, one spec per core sub-flow |
 
-T1 to T3 are read off component source — a machine import, then
-`Positioner` with `Teleport`. Classify the portal from the source, never
-from whether a demo writes `Teleport`, because most overlays let Ark
-teleport at runtime. T4 is a judgement call in both halves and is never
-derived: importing one component does not make a component T4, since
-`command` imports `dialog` and is T3 *because* of it, inheriting that
-portal's focus trap. Declaring a tier higher than the source implies is
-allowed; declaring one lower is a defect, because it silently drops the
-specs that tier owes. A tier is assigned when a component is created,
-never retro-fitted.
+T1 to T3 are read off component source — a machine import, then either
+portal marker. Classify the portal from the source, never from whether a
+demo writes `Teleport`, because most overlays let Ark teleport at
+runtime. A `Positioner` alone is enough for the same reason: the
+predecessor's `dialog`, `drawer`, `sheet` and `navigation-menu` are all
+T3 and write no `Teleport` anywhere. T4 is a judgement call in both
+halves and is never derived: importing one component does not make a
+component T4, since `command` imports `dialog` and is T3 *because* of
+it, inheriting that portal's focus trap. Declaring a tier higher than
+the source implies is allowed; declaring one lower is a defect, because
+it silently drops the specs that tier owes. A tier is assigned when a
+component is created, never retro-fitted.
+
+The registry build enforces that floor: it recomputes T1 to T3 from
+source, raises a component to the derived tier of anything it imports,
+and fails `registry:check` — and so `bun run lint` — when the declared
+`meta.tier` is lower. It writes the composition it read to
+`packages/vue/docs/component-graph.md`.
 
 Each tier has a reference component to copy from: `button` for T1 (a
 single element with variant and size axes) and `switch` for T2 (a
@@ -170,7 +178,8 @@ and belong in three different sidebar sections.
 
 ## Repository layout
 
-Partly built. Entries marked *planned* do not exist yet.
+Partly built. Entries marked *planned* do not exist yet; *generated* ones
+are written by `bun run registry:build` and are not edited by hand.
 
 ```
 apps/
@@ -184,9 +193,10 @@ packages/
     src/components/ui/      One directory per component
     src/composables/        use* modules only
     src/lib/                Pure functions and factories
+    docs/          generated Component graph, written by the registry build
 docs/              planned  Context documents, decisions, conventions
 .claude/skills/             Authoring and review skills for agents
-registry.json      planned  Consumer entry point, at the repository root
+registry.json    generated  Consumer entry point, at the repository root
 ```
 
 The documentation site runs locally only for now:
