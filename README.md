@@ -101,7 +101,9 @@ conventions is how agents become inconsistent.
 two in every consumer's install.
 
 **Versioning is git tags plus `#ref` pinning.** Registry items carry no
-version of their own. `registryDependencies` are pinned.
+version of their own. A ref pins only the item you name:
+`registryDependencies` are not pinned, so they resolve from the default
+branch. The docs site's Installation page covers what that means.
 
 **No Storybook.** Documentation is an Astro site on [Nimbus][4] that
 imports the real components. Interaction and accessibility assertions live

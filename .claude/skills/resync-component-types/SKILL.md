@@ -1,6 +1,7 @@
 ---
 name: resync-component-types
-description: Re-sync the hand-written component types.ts files against @ark-ui/vue when Ark (or its @zag-js deps) is upgraded, a types.ts provenance stamp drifts from the resolved Ark version, or a prop/emit exists in Ark but is missing or wrong locally. Takes the target package directory as an argument. Enforces the zero-Ark-type-import decoupling gates.
+description: Re-sync the hand-written component types.ts files against @ark-ui/vue when Ark (or its @zag-js deps) is upgraded, a types.ts provenance stamp drifts from the resolved Ark version, or a prop/emit exists in Ark but is missing or wrong locally. Takes the target package directory as an argument. Enforces the zero-Ark-type-import decoupling gates. Manual invocation only.
+disable-model-invocation: true
 argument-hint: "[target-dir] [ComponentName...]"
 ---
 
