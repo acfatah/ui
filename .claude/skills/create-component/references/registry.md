@@ -118,12 +118,14 @@ Derive the tier from the component you just wrote:
 | --- | --- | --- |
 | T1 | no Ark state machine, no portal | variants and sizes only, no interaction spec |
 | T2 | a state machine, renders in flow | state matrix, one spec on the primary flow |
-| T3 | state machine plus `Positioner` + `Teleport` | T2 plus open, placement, dismiss, and assert the teleported content rendered |
+| T3 | state machine plus a portal (`Positioner` or `Teleport`) | T2 plus open, placement, dismiss, and assert the teleported content rendered |
 | T4 | composite, or a high-surface / async / control-collection widget | T3 plus domain states, edge cases, one spec per core sub-flow |
 
 Classify the portal from the **component source**, not from whether a demo
 uses `Teleport` — most overlays let Ark teleport at runtime, so a demo is
-not evidence.
+not evidence. Either marker on its own settles it: a `Positioner` with no
+`Teleport` in sight is still T3, which is how the predecessor's `dialog`,
+`drawer`, `sheet` and `navigation-menu` are written.
 
 T1 to T3 are mechanical, so do not guess them: read the imports. **T4 is
 not** — it is a judgement call in both halves. Importing one component
@@ -135,6 +137,11 @@ assembling several (`sidebar` takes `button`, `input`, `sheet` and
 Declaring a tier *higher* than the source implies is allowed and needs no
 justification; declaring one *lower* is the bug, because it silently
 drops the specs that tier owes.
+
+Where the target's registry build gates tiers (`acfatah/ui` does), a too
+low declaration fails `registry:check`, and so the package lint, naming
+the evidence it read. The same pass writes the component graph, so
+composition is never hand-declared.
 
 The tier is assigned when the component is created, never retro-fitted.
 Full model and the per-tier spec contract: the target's own `README.md`,
