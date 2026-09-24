@@ -160,6 +160,94 @@
       "type": "registry:ui"
     },
     {
+      "name": "vue/popover",
+      "title": "Popover",
+      "description": "Displays rich content in a floating layer, anchored to the element that opened it.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/popover\n- shadcn/ui: https://ui.shadcn.com/docs/components/popover",
+      "dependencies": [
+        "@ark-ui/vue@^5.37.2",
+        "@vueuse/core@^14.3.0",
+        "cn@0.3.0",
+        "tw-animate-css@^1.4.0"
+      ],
+      "registryDependencies": [
+        "acfatah/ui/vue/description",
+        "acfatah/ui/vue/useForwardProps",
+        "acfatah/ui/vue/useForwardPropsEmits"
+      ],
+      "files": [
+        {
+          "path": "packages/vue/src/components/ui/popover/PopoverAnchor.vue",
+          "type": "registry:ui",
+          "target": "@ui/popover/PopoverAnchor.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/PopoverArrow.vue",
+          "type": "registry:ui",
+          "target": "@ui/popover/PopoverArrow.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/PopoverCloseTrigger.vue",
+          "type": "registry:ui",
+          "target": "@ui/popover/PopoverCloseTrigger.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/PopoverContent.vue",
+          "type": "registry:ui",
+          "target": "@ui/popover/PopoverContent.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/PopoverDescription.vue",
+          "type": "registry:ui",
+          "target": "@ui/popover/PopoverDescription.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/PopoverRoot.vue",
+          "type": "registry:ui",
+          "target": "@ui/popover/PopoverRoot.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/PopoverTitle.vue",
+          "type": "registry:ui",
+          "target": "@ui/popover/PopoverTitle.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/PopoverTrigger.vue",
+          "type": "registry:ui",
+          "target": "@ui/popover/PopoverTrigger.vue"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/index.ts",
+          "type": "registry:ui",
+          "target": "@ui/popover/index.ts"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/namespace.ts",
+          "type": "registry:ui",
+          "target": "@ui/popover/namespace.ts"
+        },
+        {
+          "path": "packages/vue/src/components/ui/popover/types.ts",
+          "type": "registry:ui",
+          "target": "@ui/popover/types.ts"
+        },
+        {
+          "path": "shared/styles/components/ui/popover/styles.ts",
+          "type": "registry:ui",
+          "target": "@ui/popover/styles.ts"
+        }
+      ],
+      "css": {
+        "@import \"tw-animate-css\"": {}
+      },
+      "meta": {
+        "tier": "T3"
+      },
+      "categories": [
+        "overlay"
+      ],
+      "type": "registry:ui"
+    },
+    {
       "name": "vue/switch",
       "title": "Switch",
       "description": "A control that allows the user to toggle between checked and not checked.\n\nReferences:\n- Headless API: https://ark-ui.com/docs/components/switch\n- shadcn/ui: https://ui.shadcn.com/docs/components/switch",
@@ -400,6 +488,11 @@
           "path": "skills/vue-ui/references/label.md",
           "type": "registry:file",
           "target": "~/.claude/skills/vue-ui/references/label.md"
+        },
+        {
+          "path": "skills/vue-ui/references/popover.md",
+          "type": "registry:file",
+          "target": "~/.claude/skills/vue-ui/references/popover.md"
         },
         {
           "path": "skills/vue-ui/references/switch.md",
