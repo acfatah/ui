@@ -164,6 +164,52 @@ describe('buildRegistry', () => {
   })
 })
 
+describe('agent skill', () => {
+  const SKILL_MANIFEST = 'packages/vue/src/skill/_registry.ts'
+
+  function skillManifest(extra: object = {}) {
+    write(SKILL_MANIFEST, `export default ${JSON.stringify({
+      type: 'registry:item',
+      name: 'vue/agent-skill',
+      ...extra,
+    })}\n`)
+  }
+
+  it('emits no item without a manifest', async () => {
+    expect((await build()).items.map(i => i.name)).not.toContain('vue/agent-skill')
+  })
+
+  it('ships every file under skills/vue-ui, SKILL.md first, into .claude/skills', async () => {
+    skillManifest()
+    write('skills/vue-ui/references/switch.md', '# Switch\n')
+    write('skills/vue-ui/references/button.md', '# Button\n')
+    write('skills/vue-ui/SKILL.md', '---\nname: vue-ui\n---\n')
+
+    const skill = item(await build(), 'vue/agent-skill')
+
+    expect(skill.files).toEqual([
+      { path: 'skills/vue-ui/SKILL.md', type: 'registry:file', target: '~/.claude/skills/vue-ui/SKILL.md' },
+      { path: 'skills/vue-ui/references/button.md', type: 'registry:file', target: '~/.claude/skills/vue-ui/references/button.md' },
+      { path: 'skills/vue-ui/references/switch.md', type: 'registry:file', target: '~/.claude/skills/vue-ui/references/switch.md' },
+    ])
+    expect(skill.dependencies).toBeUndefined()
+    expect(skill.registryDependencies).toBeUndefined()
+  })
+
+  it('throws when the manifest declares files[]', async () => {
+    skillManifest({ files: [{ path: 'skills/vue-ui/SKILL.md', type: 'registry:file', target: '~/x.md' }] })
+    write('skills/vue-ui/SKILL.md', '')
+
+    await expect(build()).rejects.toThrow(/declares files\[\]/)
+  })
+
+  it('throws when SKILL.md is missing', async () => {
+    skillManifest()
+
+    await expect(build()).rejects.toThrow(/SKILL\.md does not exist/)
+  })
+})
+
 /** Rewrites the button fixture's manifest with the component field pair. */
 function buttonTier(value: string) {
   write(

@@ -146,9 +146,11 @@ and fails `registry:check` — and so `bun run lint` — when the declared
 `packages/vue/docs/component-graph.md`.
 
 Each tier has a reference component to copy from: `button` for T1 (a
-single element with variant and size axes) and `switch` for T2 (a
+single element with variant and size axes), `switch` for T2 (a
 multi-part Ark wrapper with prop and emit forwarding, a state matrix and
-one primary-flow spec). Their specs are the reference specs.
+one primary-flow spec) and `tags-input` for T4 (a high-surface control
+declared above its derived T2, with one spec per sub-flow, domain states
+and edge cases). Their specs are the reference specs. T3 has none yet.
 
 Component names used as examples here and below (`command`, `calendar`,
 `tooltip`) are from the predecessor, where the model was applied to all
@@ -179,7 +181,8 @@ and belong in three different sidebar sections.
 ## Repository layout
 
 Partly built. Entries marked *planned* do not exist yet; *generated* ones
-are written by `bun run registry:build` and are not edited by hand.
+are written by `bun run registry:build` or `bun run skill:build` and are
+not edited by hand.
 
 ```
 apps/
@@ -196,6 +199,8 @@ packages/
     docs/          generated Component graph, written by the registry build
 docs/              planned  Context documents, decisions, conventions
 .claude/skills/             Authoring and review skills for agents
+skills/vue-ui/              Consumer agent skill, shipped as vue/agent-skill
+  references/    generated  One usage reference per docs page (skill:build)
 registry.json    generated  Consumer entry point, at the repository root
 ```
 

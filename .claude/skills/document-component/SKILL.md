@@ -122,6 +122,8 @@ bun run check:demos                  # page mirrors its examples
 bunx --bun nimbus-docs check --json  # authoring rules, links, MDX
 bun run build
 grep -c '^```' dist/components/<slug>/index.md
+bun run skill:build                  # regenerate the consumer agent skill
+(cd ../../packages/vue && bun run registry:build)
 ```
 
 - `check:demos` must end with 0 errors and no warning naming this page;
@@ -135,10 +137,16 @@ grep -c '^```' dist/components/<slug>/index.md
   one fence per demo (the hero included), plus install and usage.
   Anything less means the Markdown view lost a fence. The count assumes
   three-backtick fences and no example line starting with them.
+- `skill:build` regenerates `skills/vue-ui/references/<slug>.md` and
+  the index in `skills/vue-ui/SKILL.md` from this page. It fails on a
+  PascalCase tag it has no Markdown form for; teach
+  `scripts/build-agent-skill.ts` the tag rather than dropping it. A
+  new page adds a reference file, so `registry:build` must follow, or
+  `registry:check` fails on the stale `vue/agent-skill` item.
 - Optionally open `/components/<slug>` with `bun run dev` and look at
   both themes.
 
-Done when all four pass.
+Done when all five pass.
 
 ## 5. Report
 

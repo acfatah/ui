@@ -13,9 +13,11 @@
     "check": "bunx --bun nimbus-docs check",
     "lint:docs": "bunx --bun nimbus-docs lint",
     "lint:docs:fix": "bunx --bun nimbus-docs lint --fix",
-    "lint": "bunx --bun eslint && bun run check:demos",
+    "lint": "bunx --bun eslint && bun run check:demos && bun run check:skill",
     "format": "bunx --bun eslint --fix && bun run check:demos --fix",
-    "check:demos": "bun scripts/check-demo-fences.ts"
+    "check:demos": "bun scripts/check-demo-fences.ts",
+    "check:skill": "bun scripts/build-agent-skill.ts --check",
+    "skill:build": "bun scripts/build-agent-skill.ts"
   },
   "dependencies": {
     "@astrojs/vue": "^7.0.3",

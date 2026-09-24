@@ -4,7 +4,9 @@ Conventions for `<ComponentName>.spec.ts`, taken from the target's
 reference specs. Read the one for your tier beside this file. In
 `acfatah/ui`: `button/Button.spec.ts` for a single-element T1,
 `switch/Switch.spec.ts` for a multi-part T2 (composed fixture, state
-matrix, controlled `v-model`, toggle flow).
+matrix, controlled `v-model`, toggle flow), and
+`tags-input/TagsInput.spec.ts` for a T4 (collection rendered through
+`Context`, one `describe` per sub-flow, domain states, edge cases).
 
 ## Imports and setup
 
@@ -91,6 +93,28 @@ teleported content (T3 and up).
   row and a new value is tested without editing the spec. Assert every
   class of the requested value is present, and the default value's own
   classes absent.
+
+## Collections and typed input (T4)
+
+From the `tags-input` reference spec.
+
+- Render the collection the way a consumer does, from the machine's
+  value through Ark's `<Name>.Context` slot, so an add or delete
+  re-renders items without the fixture owning the state. Read the
+  result back from the DOM (`[data-part="item-text"]`) with
+  `expect.poll`, never from a ref the test does not own.
+- **Type one entry at a time** when an entry commits on a key.
+  Playwright types faster than Zag clears the input after a commit, so
+  `keyboard('vue,ark,')` loses characters. Poll for the first tag, then
+  type the next.
+- **Paste without the clipboard.** Browser paste needs a permission the
+  runner does not grant. Click the input, poll until the root carries
+  `data-focus` (Zag handles focus in a microtask and ignores input
+  events before it), then set `input.value` and dispatch
+  `new InputEvent('input', { inputType: 'insertFromPaste' })`.
+- An input part rendered self-closing drops its child under `asChild`.
+  Every Ark part keeps a `<slot />`, inputs included; the `asChild` spec
+  is what catches a missing one.
 
 ## First run of a new component
 

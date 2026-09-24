@@ -57,6 +57,7 @@ export default defineConfig({
         optimizeDeps: {
           include: [
             '@ark-ui/vue/switch',
+            '@ark-ui/vue/tags-input',
             'axe-core',
           ],
         },

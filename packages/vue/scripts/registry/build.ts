@@ -2,7 +2,7 @@
  * Builds the root `registry.json` that `shadcn add acfatah/ui/vue/<item>`
  * reads straight from GitHub.
  *
- * Items come from three places:
+ * Items come from four places:
  *
  *   - `src/components/ui/<dir>/`: one `registry:ui` item per directory.
  *     `_registry.ts` supplies metadata; every other file ships, except
@@ -11,6 +11,9 @@
  *   - `src/composables/use*.ts`: one `registry:hook` item each, landing
  *     in the consumer's `aliases.hooks` (`@/composables`).
  *   - `src/setup/_registry.ts`: `vue/project-setup`, authored by hand.
+ *   - `src/skill/_registry.ts`: `vue/agent-skill`. Its files are every
+ *     file under `skills/vue-ui/`, targeted at the consumer's
+ *     `.claude/skills/vue-ui/`, so a generated reference cannot be left out.
  *
  * `dependencies` and `registryDependencies` are derived from imports and
  * merged with whatever `_registry.ts` declares. Every shipped file gets an
@@ -63,6 +66,10 @@ const TEST_PACKAGES = new Set([
 ])
 
 const SHIPPED_EXTENSIONS = new Set(['.ts', '.vue', '.css'])
+
+/** The consumer agent skill: its source, and where it lands in a project. */
+const SKILL_SOURCE = 'skills/vue-ui'
+const SKILL_TARGET = '~/.claude/skills/vue-ui'
 
 /*
   Test-depth tiers. The model and the spec contract each tier owes are in
@@ -663,6 +670,33 @@ class Builder {
     }
   }
 
+  async skillItem(): Promise<RegistryItem | undefined> {
+    const manifestFile = path.join(this.srcDir, 'skill/_registry.ts')
+    if (!existsSync(manifestFile))
+      return undefined
+
+    const manifestRel = this.rel(manifestFile)
+    const manifest = await importRegistryItem(manifestFile)
+    const sourceDir = path.join(this.options.rootDir, SKILL_SOURCE)
+
+    if (manifest.files?.length)
+      fail(manifestRel, `declares files[]; the build ships ${SKILL_SOURCE}/ instead.`)
+    if (!existsSync(path.join(sourceDir, 'SKILL.md')))
+      fail(manifestRel, `${SKILL_SOURCE}/SKILL.md does not exist.`)
+
+    // SKILL.md first, then the references, so the entry point reads first.
+    const files = listFiles(sourceDir)
+      .map(file => toPosix(path.relative(sourceDir, file)))
+      .sort((a, b) => Number(b === 'SKILL.md') - Number(a === 'SKILL.md') || a.localeCompare(b))
+      .map(local => ({
+        path: `${SKILL_SOURCE}/${local}`,
+        type: 'registry:file' as const,
+        target: `${SKILL_TARGET}/${local}`,
+      }))
+
+    return this.item(manifest, files, new Set(), new Set())
+  }
+
   /** Fixed key order, sorted dependency lists, empty lists dropped. */
   item(
     manifest: RegistryItem,
@@ -700,6 +734,10 @@ class Builder {
       items.push(await this.componentItem(dir))
     for (const name of this.composableNames())
       items.push(this.composableItem(name))
+
+    const skill = await this.skillItem()
+    if (skill)
+      items.push(skill)
 
     const names = new Set<string>()
     for (const item of items) {

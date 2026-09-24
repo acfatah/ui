@@ -98,6 +98,20 @@ Components land in `src/components/ui/`, and composables they use land in
 
 `npx shadcn@latest add ...` works the same way without Bun.
 
+## Add the agent skill
+
+Optional. Teaches your AI agent how to use the installed components:
+the conventions, and a usage reference per component, generated from
+these docs pages.
+
+```bash
+bunx --bun shadcn@latest add acfatah/ui/vue/agent-skill
+```
+
+It lands in `.claude/skills/vue-ui/`, where Claude Code discovers it.
+Re-run the command after adding components from a newer release to
+refresh the references.
+
 ## Pin a version
 
 Pin with a tag or a full commit SHA. Without a ref you get the default
