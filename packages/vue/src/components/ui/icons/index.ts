@@ -19,4 +19,5 @@ export {
   ChevronRightIcon,
   GitBranchIcon,
   LoaderCircleIcon,
+  XIcon,
 } from '@lucide/vue'
