@@ -24,7 +24,8 @@ these win.
   `<slug>` being the registry `name` after its last `/`. Per
   example: import it from
   `packages.vue/components/ui/<name>/examples/<Example>.vue` in the MDX
-  file, render `<Demo><Example client:load /></Demo>`, then a fenced
+  file, render `<Demo><Example client:load /></Demo>` (`client:only="vue"`
+  for an overlay, below), then a fenced
   `vue` block identical to the example file. The fence is what reaches
   agents: `index.md` and `llms-full.txt` strip every component. Write
   pages with the `document-component` skill; `bun run check:demos` (part
@@ -32,6 +33,18 @@ these win.
   `--fix` resyncs it from the file.
 - **Islands are imported per file.** `client:*` on a component from the
   `src/components.ts` globals registry fails the build.
+- **Overlay islands are `client:only="vue"`.** Astro's Vue renderer drops
+  `Teleport` output during SSR, so a `client:load` overlay hydrates
+  against content that was never rendered: Vue logs hydration mismatches
+  and Zag finds no content node, so the trigger does nothing. Verified
+  on `popover`: rendered client-only, the content teleports to `<body>`,
+  picks up the shared tokens in both themes (`.dark` is on `<html>`), and
+  opens, places, focuses and dismisses.
+- **Each island gets its own id prefix** (`src/vue-app.ts`, the Vue
+  `appEntrypoint`). Every island is a separate Vue app, so `useId()`
+  restarts per island; Astro prefixes server-rendered ones, not
+  `client:only` ones, and without the entrypoint two overlays on a page
+  share Ark ids and position or focus each other's elements.
 - **`@/` resolves by importer** (`plugins/package-alias.ts`): inside
   `packages/vue/src` it means that package, everywhere else this app. Keep
   Nimbus files on `@/` as shipped.
