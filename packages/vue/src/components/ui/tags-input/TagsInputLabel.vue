@@ -13,20 +13,24 @@ interface Props extends TagsInputLabelProps {
 }
 
 const props = defineProps<Props>()
-const delegatedProps = reactiveOmit(props, 'class')
+const delegatedProps = reactiveOmit(props, 'class', 'asChild')
 const forwardedProps = useForwardProps(delegatedProps)
 </script>
 
 <!--
   Ark renders a <label> for the text input and `label` renders one too,
-  so Ark's props land on `label`'s element through as-child.
+  so Ark's props land on `label`'s element through as-child. The
+  consumer's `asChild` goes to `label`, which then renders their child.
 -->
 <template>
   <TagsInput.Label
     v-bind="forwardedProps"
     as-child
   >
-    <Label :class="props.class">
+    <Label
+      :as-child="props.asChild"
+      :class="props.class"
+    >
       <slot />
     </Label>
   </TagsInput.Label>
