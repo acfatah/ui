@@ -153,6 +153,27 @@ From the `tags-input` reference spec.
   Every Ark part keeps a `<slot />`, inputs included; the `asChild` spec
   is what catches a missing one.
 
+## Upstream defects
+
+For the `it.fails` case in `SKILL.md` step 3 only. `Popover.spec.ts` is
+the example: with `lazyMount`, Zag never labels the dialog by its title.
+
+- **Test the workaround, green.** The behaviour the docs page tells
+  consumers to use (`aria-label` on the content), asserted like any
+  other test, axe included.
+- **Keep the bug as an `it.fails` tripwire**, asserting the correct
+  behaviour. It passes while the bug exists and fails once an upgrade
+  fixes it; that failure is the prompt to drop the docs caveat and turn
+  it into a plain `it`.
+- **Make it fail for the bug, not for timing.** Wait for the state the
+  bug concerns first (the dialog visible), then assert with a short
+  bound (`expect.element(locator, { timeout: 1000 })`). Otherwise a
+  broken locator also "fails as expected", and the default wait costs
+  every run 15 seconds.
+- **Prove it can flip once**: temporarily change the fixture so the
+  correct behaviour holds (`lazyMount: false`), run it, and see
+  "Expect test to fail". Revert the probe.
+
 ## First run of a new component
 
 Each Ark subpath a component imports (`@ark-ui/vue/switch`) is listed in

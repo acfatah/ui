@@ -189,7 +189,9 @@ What a T3 adds on top of everything above. Copy from the T3 reference
   `as-child`: omit the consumer's `asChild` from what reaches the Ark
   part and pass it to the inner component, or it is silently ignored.
   The content is a `dialog`, so every example gives it a title, or an
-  `aria-label` on the content when it is too small for one.
+  `aria-label` on the content when it is too small for one. Zag checks
+  for the title once, when the machine starts, so with `lazyMount` or a
+  `v-if` title the page tells consumers to use `aria-label`.
 - **Triggers are unstyled.** Trigger, anchor and close trigger forward
   props and take a `Button` through `as-child`, so they need no styles
   export and no `class` handling.
