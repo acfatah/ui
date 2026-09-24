@@ -60,4 +60,5 @@ when this reference and the code disagree, and trust the code.
 | Icons | [references/icons.md](references/icons.md) | The single icon indirection every component imports its icons from. |
 | Label | [references/label.md](references/label.md) | Renders an accessible label associated with controls. |
 | Switch | [references/switch.md](references/switch.md) | A control that allows the user to toggle between checked and not checked. |
+| Tags Input | [references/tags-input.md](references/tags-input.md) | A text input that turns what is typed into a list of removable, editable tags. |
 <!-- index:end -->
