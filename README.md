@@ -148,9 +148,12 @@ and fails `registry:check` — and so `bun run lint` — when the declared
 Each tier has a reference component to copy from: `button` for T1 (a
 single element with variant and size axes), `switch` for T2 (a
 multi-part Ark wrapper with prop and emit forwarding, a state matrix and
-one primary-flow spec) and `tags-input` for T4 (a high-surface control
-declared above its derived T2, with one spec per sub-flow, domain states
-and edge cases). Their specs are the reference specs. T3 has none yet.
+one primary-flow spec), `popover` for T3 (content teleported inside
+Ark's positioner, placement, dismissal and focus return, with specs that
+query the teleported content through the page) and `tags-input` for T4
+(a high-surface control declared above its derived T2, with one spec per
+sub-flow, domain states and edge cases). Their specs are the reference
+specs.
 
 Component names used as examples here and below (`command`, `calendar`,
 `tooltip`) are from the predecessor, where the model was applied to all

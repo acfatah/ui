@@ -4,7 +4,8 @@ Conventions for `<ComponentName>.spec.ts`, taken from the target's
 reference specs. Read the one for your tier beside this file. In
 `acfatah/ui`: `button/Button.spec.ts` for a single-element T1,
 `switch/Switch.spec.ts` for a multi-part T2 (composed fixture, state
-matrix, controlled `v-model`, toggle flow), and
+matrix, controlled `v-model`, toggle flow), `popover/Popover.spec.ts`
+for a T3 (teleported content, placement, dismissal, focus return), and
 `tags-input/TagsInput.spec.ts` for a T4 (collection rendered through
 `Context`, one `describe` per sub-flow, domain states, edge cases).
 
@@ -93,6 +94,42 @@ teleported content (T3 and up).
   row and a new value is tested without editing the spec. Assert every
   class of the requested value is present, and the default value's own
   classes absent.
+
+## Portals (T3)
+
+`popover/Popover.spec.ts` is the pattern.
+
+- **Find teleported content through the document.** Name it by role
+  (`page.getByRole('dialog', { name })`) when asserting through
+  `expect.element`, and read attributes off
+  `document.querySelector('[data-scope=…][data-part=…]')`. Assert it is
+  *not* inside `screen.container`, and that its positioner's parent is
+  `document.body`: that is the teleport assertion T3 owes.
+- **Closed content is hidden, not absent.** Ark mounts it on the first
+  render unless `lazyMount` is set, so assert `hidden` or visibility,
+  not existence. `lazyMount` and `unmountOnExit` get a test each.
+- **Put a plain `Outside` button in the fixture**, before the root.
+  Clicking the page body lands wherever its centre is, which may be the
+  content; a named button outside the popover is deterministic, and it
+  doubles as a `finalFocusEl` or `persistentElements` target.
+- **Dismissal is one `it.each`** over Escape, an outside click and the
+  close trigger, each asserting the content is gone and the trigger's
+  `aria-expanded` is `false`. Focus return, `restoreFocus`,
+  `closeOnEscape` and `closeOnInteractOutside` get a test each.
+- **Placement asserts attributes**, never pixels: `data-side` and
+  `data-placement` on the content for each side.
+- **axe runs on the open content**, scoped to the positioner: plain,
+  `modal`, and named by `aria-label` with no title.
+- **`portalled` off keeps the content in place**: assert the positioner
+  is inside `screen.container`.
+- **Emits get a test each** where a flow triggers them (`escapeKeyDown`,
+  `interactOutside`, `pointerDownOutside`, `focusOutside`,
+  `exitComplete`). `check:props` counts props only, so nothing else
+  flags an untested emit.
+- **Unmount removes the teleport.** One test unmounts and asserts no
+  `[data-scope]` node is left in `body`, so tests cannot bleed into each
+  other. `vitest-browser-vue` cleans up after each test; the assertion
+  proves it for the portal.
 
 ## Collections and typed input (T4)
 
