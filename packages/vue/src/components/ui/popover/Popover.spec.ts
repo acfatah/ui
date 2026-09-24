@@ -310,19 +310,32 @@ describe('popover', () => {
       await expect.element(page.getByRole('dialog')).toBeVisible()
     })
 
-    it('labels lazily mounted content by its title', async () => {
-      const screen = await renderPopover({ lazyMount: true })
+    it('names lazily mounted content by an aria-label', async () => {
+      const screen = await renderPopover({ lazyMount: true }, { Content: { 'aria-label': 'Layer size' } })
 
       await userEvent.click(screen.getByRole('button', { name: 'Open' }))
 
-      /*
-        Red against @zag-js/popover 1.43.3: `aria-labelledby` is set only
-        when `rendered.title` holds, and Zag checks for the title once,
-        when the machine mounts, before Vue mounts the lazy content. The
-        dialog is unnamed. A title added later by `v-if` fails the same
-        way.
-      */
-      await expect.element(dialog()).toBeVisible()
+      await expect.element(page.getByRole('dialog', { name: 'Layer size' })).toBeVisible()
+      await expectNoAxeViolations(part('positioner'))
+    })
+
+    /*
+      Upstream defect, documented on the popover page with the aria-label
+      workaround above. @zag-js/popover (1.43.3 to 1.44.0, 2.0.0-next.3)
+      checks for a rendered title once, when the machine starts
+      (`popover.machine.mjs`, `entry: ["checkRenderedElements"]`), so a
+      title that mounts later never sets `aria-labelledby`. When an
+      upgrade fixes it, this test fails: drop the docs caveat and make it
+      a plain `it`.
+    */
+    it.fails('flags that lazily mounted content is not labelled by its title', async () => {
+      const screen = await renderPopover({ lazyMount: true })
+
+      await userEvent.click(screen.getByRole('button', { name: 'Open' }))
+      await expect.element(page.getByRole('dialog')).toBeVisible()
+
+      await expect.element(page.getByRole('dialog'), { timeout: 1000 })
+        .toHaveAttribute('aria-labelledby', part('title').id)
     })
 
     it('unmounts the content on close with unmountOnExit', async () => {
