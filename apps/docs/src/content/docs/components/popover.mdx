@@ -97,6 +97,10 @@ The content is a `dialog`. Give it a `Popover.Title`, or an `aria-label`
 on `Popover.Content` when it is too small for one, so assistive technology
 announces what opened.
 
+With `lazy-mount`, or a title shown by `v-if`, use `aria-label` on
+`Popover.Content`. Ark checks for a title only when the popover is created,
+so a title that appears later does not name the content.
+
 ## Examples
 
 ### Default
@@ -204,7 +208,7 @@ title, so `aria-label` names each one.
 import { Button } from '@/components/ui/button'
 import { Popover } from '@/components/ui/popover'
 
-const placements = ['top', 'right', 'bottom', 'left'] as const
+const placements = ['left', 'top', 'bottom', 'right'] as const
 </script>
 
 <template>
