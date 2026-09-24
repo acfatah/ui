@@ -75,6 +75,11 @@ import { TagsInput } from '@/components/ui/tags-input'
 </script>
 
 <template>
+  <!--
+    `placeholder` goes on Root: it shows only while there are no tags.
+    Context exposes the tags as `api.value`; each Item needs index and
+    value. Control, not Root, draws the bordered field.
+  -->
   <TagsInput.Root placeholder="Add a tag">
     <TagsInput.Context v-slot="api">
       <TagsInput.Label>Tags</TagsInput.Label>
@@ -640,7 +645,38 @@ const validate = ({ inputValue }: ValidateArgs) => /^[a-z0-9-]+$/.test(inputValu
 </template>
 ```
 
+## Notes
+
+- **Style the field on `Control`.** `TagsInput.Control` draws the border,
+  focus ring and invalid outline. `TagsInput.Root` is only the column that
+  holds the label and the field, so a border class there styles nothing
+  you want.
+- **Set `placeholder` on `Root`, not `Input`.** On `Root` it shows only
+  while there are no tags. On `Input` it overrides that and stays visible
+  after tags are added.
+- **Render items from `Context` or your `v-model` ref.** `TagsInput.Root`
+  passes nothing to its slot; read the tags as `api.value` inside
+  `<TagsInput.Context v-slot="api">`. `TagsInput.Item` needs both `index`
+  and `value`.
+- **The form value is joined by `", "`.** `TagsInput.HiddenInput`
+  submits `"vue, ark"`, whatever the `delimiter` is. Split on `", "` on the
+  server, or send the `v-model` array yourself.
+- **Some rejections are silent.** A duplicate, or a tag past a plain
+  `max`, is dropped with no event. `valueInvalid` fires only when
+  `validate` returns `false` (`invalidTag`) or when `allow-overflow` lets
+  the count pass `max` (`rangeOverflow`).
+- **`sanitize-value` replaces the default trim.** Trim inside your own
+  function if you still want it.
+- **Delete buttons are not in the tab order.** Keyboard users highlight a
+  tag with `Backspace` or the arrow keys and remove it with `Backspace` or
+  `Delete`. `Enter` or a double-click edits a tag; `Escape` cancels.
+- **Coming from `shadcn-vue-ark`?** `TagsInput.ItemDelete` is now
+  `TagsInput.ItemDeleteTrigger`, the border moved from `Root` to
+  `Control`, and the tags come from `TagsInput.Context` instead of the
+  root's slot. Code copied from shadcn-vue uses Reka UI's parts and will
+  not work here.
+
 ## References
 
 - [Ark UI Tags Input](https://ark-ui.com/docs/components/tags-input)
-- [shadcn-vue Tags Input](https://www.shadcn-vue.com/docs/components/tags-input)
+- [shadcn-vue Tags Input](https://shadcn-vue.com/docs/components/tags-input)

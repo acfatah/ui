@@ -17,7 +17,9 @@ export const TagsInput = {
    * TagsInputRoot component
    *
    * Owns the tag values, the text being typed, and every flag that governs
-   * adding, editing and deleting tags.
+   * adding, editing and deleting tags. Set `placeholder` here, not on
+   * `Input`: here it shows only while there are no tags. Passes nothing
+   * to its slot; read the tags through `Context`.
    */
   Root: TagsInputRoot,
 
@@ -32,14 +34,15 @@ export const TagsInput = {
    * TagsInputControl component
    *
    * The bordered field holding the tags, the input and the clear trigger.
+   * Border, focus ring and invalid styles live here, not on `Root`.
    */
   Control: TagsInputControl,
 
   /**
    * TagsInputItem component
    *
-   * One tag. Renders a preview, text, delete trigger and edit input when
-   * given no children.
+   * One tag. Requires `index` and `value`. Renders a preview, text, delete
+   * trigger and edit input when given no children.
    */
   Item: TagsInputItem,
 
@@ -72,7 +75,8 @@ export const TagsInput = {
   /**
    * TagsInputInput component
    *
-   * Where new tags are typed.
+   * Where new tags are typed. A `placeholder` set here stays visible
+   * after tags are added; set it on `Root` instead.
    */
   Input: TagsInputInput,
 
@@ -87,14 +91,16 @@ export const TagsInput = {
   /**
    * TagsInputHiddenInput component
    *
-   * Submits the tags with a form, joined by ", ".
+   * Submits the tags with a form as one string joined by ", ", whatever
+   * the delimiter is.
    */
   HiddenInput: TagsInputHiddenInput,
 
   /**
    * TagsInputContext component
    *
-   * Exposes the machine's API through its default slot.
+   * Exposes the machine's API through its default slot. Render the tags
+   * from it: `<TagsInput.Context v-slot="api">`, then `api.value`.
    *
    * See: https://ark-ui.com/docs/components/tags-input#context
    */
