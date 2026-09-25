@@ -14,6 +14,7 @@ export const registryItem = {
 
   dependencies: [
     'tailwindcss',
+    'tw-animate-css',
   ],
 
   devDependencies: [
