@@ -554,6 +554,66 @@ describe('popover', () => {
 
       await expect.poll(() => onExitComplete).toHaveBeenCalled()
     })
+
+    /*
+      Zag asks a nested layer to dismiss when its parent layer goes away
+      while it is open (`@zag-js/dismissable` layer stack), so the
+      fixture nests one popover inside another and closes the outer.
+    */
+    async function renderNested(onRequestDismiss: (event: CustomEvent) => void) {
+      const outerOpen = ref(false)
+      const screen = await render(defineComponent({
+        components,
+        setup: () => ({ outerOpen, onRequestDismiss }),
+        template: `
+          <PopoverRoot v-model:open="outerOpen">
+            <PopoverTrigger>Outer</PopoverTrigger>
+            <PopoverContent>
+              <PopoverTitle>Outer layer</PopoverTitle>
+              <PopoverRoot @request-dismiss="onRequestDismiss">
+                <PopoverTrigger>Inner</PopoverTrigger>
+                <PopoverContent><PopoverTitle>Inner layer</PopoverTitle></PopoverContent>
+              </PopoverRoot>
+            </PopoverContent>
+          </PopoverRoot>
+        `,
+      }))
+
+      await userEvent.click(screen.getByRole('button', { name: 'Outer' }))
+      await expect.element(page.getByRole('dialog', { name: 'Outer layer' })).toBeVisible()
+      await userEvent.click(page.getByRole('button', { name: 'Inner' }))
+      await expect.element(page.getByRole('dialog', { name: 'Inner layer' })).toBeVisible()
+
+      return { outerOpen }
+    }
+
+    it('closes a nested popover when its parent closes', async () => {
+      const { outerOpen } = await renderNested(() => {})
+
+      outerOpen.value = false
+
+      await expect.element(page.getByRole('dialog', { name: 'Outer layer' })).not.toBeInTheDocument()
+      await expect.element(page.getByRole('dialog', { name: 'Inner layer' })).not.toBeInTheDocument()
+    })
+
+    /*
+      Upstream defect, documented on the popover page with the workaround
+      above: listen to the parent's `openChange`. @ark-ui/vue 5.39.2
+      declares `requestDismiss` on Popover.Root but `usePopover`
+      (`use-popover.js`) never passes a handler to the machine, and a
+      declared emit's listener is not a prop, so Zag's layer stack never
+      reaches it. When an upgrade wires it, this test fails: drop the docs
+      caveat and make it a plain `it`, then add a `preventDefault` case.
+    */
+    it.fails('flags that requestDismiss never reaches a listener', async () => {
+      const onRequestDismiss = vi.fn()
+      const { outerOpen } = await renderNested(onRequestDismiss)
+
+      outerOpen.value = false
+      await expect.element(page.getByRole('dialog', { name: 'Inner layer' })).not.toBeInTheDocument()
+
+      await expect.poll(() => onRequestDismiss, { timeout: 1000 }).toHaveBeenCalledOnce()
+    })
   })
 
   describe('placement', () => {

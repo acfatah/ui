@@ -84,6 +84,10 @@ With `lazy-mount`, or a title shown by `v-if`, use `aria-label` on
 `Popover.Content`. Ark checks for a title only when the popover is created,
 so a title that appears later does not name the content.
 
+A popover opened inside another closes with it. Ark does not deliver
+`request-dismiss` to your listener, so to react to that close, listen to
+the outer popover's `@update:open` (or `@open-change`) instead.
+
 ## Examples
 
 ### Default
