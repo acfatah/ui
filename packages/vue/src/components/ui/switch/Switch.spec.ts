@@ -186,7 +186,13 @@ describe('switch', () => {
       await expect.element(screen.getByTestId('input')).toHaveAttribute('role', 'switch')
       await expect.element(screen.getByTestId('control')).toHaveAttribute('data-part', 'control')
       await expect.element(screen.getByTestId('thumb')).toHaveAttribute('data-part', 'thumb')
-      expect((await screen.getByText('Airplane mode').element()).tagName).toBe('EM')
+      // The consumer's child replaces the default <span>, carrying Ark's
+      // label props and the label styles, with no wrapper around it.
+      const label = await screen.getByText('Airplane mode').element()
+      expect(label.tagName).toBe('EM')
+      expect(label.dataset.part).toBe('label')
+      expect(label.classList.contains('font-medium')).toBe(true)
+      expect(label.parentElement!.tagName).not.toBe('SPAN')
       expect((await screen.getByText('Help').element()).tagName).toBe('SMALL')
     })
 

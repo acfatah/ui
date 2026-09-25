@@ -104,6 +104,14 @@ A part may render another component (`SwitchLabel` renders `label`):
 - Check the element it produces against where it sits. `Switch.Root`
   is a `<label>`, so `SwitchLabel` renders `Label as-child` onto a
   `<span>`; a second `<label>` inside the root is invalid.
+- Hand the consumer's `asChild` to the inner component. The Ark part's
+  `as-child` is hard-coded, so a forwarded `asChild` is overridden and
+  silently does nothing: omit it (`reactiveOmit(props, 'class',
+  'asChild')`) and bind `:as-child="props.asChild"` on the inner
+  component (`TagsInputLabel`), or render the slot in place of the
+  default wrapper (`SwitchLabel`). The spec asserts the consumer's
+  child carries the part's `data-part` and styles, not only that it
+  exists.
 
 ## ARIA
 

@@ -13,13 +13,14 @@ interface Props extends SwitchLabelProps {
 }
 
 const props = defineProps<Props>()
-const delegatedProps = reactiveOmit(props, 'class')
+const delegatedProps = reactiveOmit(props, 'class', 'asChild')
 const forwardedProps = useForwardProps(delegatedProps)
 </script>
 
 <!--
   Switch.Root already renders a <label>, so the label styles go onto a
-  <span>: a second <label> nested inside it would be invalid.
+  <span>: a second <label> nested inside it would be invalid. With
+  `asChild` they go onto the consumer's child instead.
 -->
 <template>
   <Switch.Label
@@ -30,7 +31,8 @@ const forwardedProps = useForwardProps(delegatedProps)
       as-child
       :class="props.class"
     >
-      <span><slot /></span>
+      <slot v-if="props.asChild" />
+      <span v-else><slot /></span>
     </Label>
   </Switch.Label>
 </template>

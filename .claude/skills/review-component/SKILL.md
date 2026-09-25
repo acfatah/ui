@@ -190,7 +190,10 @@ Each is a question against the target, not an assertion about it.
    `references/props-emits.md`. A single-element component that passes
    props explicitly, in a target with no forwarding composables, is
    graded on whether it forwards everything it declares, not on the
-   composable.
+   composable. A part that renders an Ark part with a hard-coded
+   `as-child` around another component must omit `asChild` from what it
+   forwards and pass it to that component; forwarded, it is overridden
+   and ignored (🟧).
 7. **Styles — per the target's convention, established in §0.**
    - Target uses `styles.ts`: no Tailwind strings left in the template,
      `<componentName><Part>Styles` naming with one export per part, no

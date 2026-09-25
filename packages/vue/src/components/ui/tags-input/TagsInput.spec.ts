@@ -258,7 +258,11 @@ describe('tags input', () => {
       await expect.element(screen.getByTestId('input')).toHaveAttribute('data-part', 'input')
       await expect.element(screen.getByTestId('clear')).toHaveAttribute('data-part', 'clear-trigger')
       expect((await screen.getByTestId('hidden').element()).hasAttribute('hidden')).toBe(true)
-      expect(screen.container.querySelector('[data-part="label"]')!.tagName).toBe('LABEL')
+      // The consumer's child takes Ark's label props and the label styles.
+      const label = await screen.getByText('Tags').element()
+      expect(label.tagName).toBe('SPAN')
+      expect(label.dataset.part).toBe('label')
+      expect(label.classList.contains('font-medium')).toBe(true)
     })
 
     it('renders the item parts onto their children when asChild is set', async () => {
