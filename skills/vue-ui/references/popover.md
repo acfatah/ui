@@ -88,6 +88,10 @@ A popover opened inside another closes with it. Ark does not deliver
 `request-dismiss` to your listener, so to react to that close, listen to
 the outer popover's `@update:open` (or `@open-change`) instead.
 
+The content fades and zooms in from its trigger, sliding from the side it
+opens on, and reverses on close. The animation is in `popoverContentStyles`
+in `styles.ts`; see Animation to change it.
+
 ## Examples
 
 ### Default
