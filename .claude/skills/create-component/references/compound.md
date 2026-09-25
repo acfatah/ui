@@ -201,7 +201,13 @@ What a T3 adds on top of everything above. Copy from the T3 reference
   same word, so the label stays in the name; a consumer's `aria-label`
   on the part replaces the default.
 - **The root renders no element**, so it takes no `class`; forward its
-  props and emits whole.
+  props and emits whole. Two Ark gaps come with it (5.39.2), in every
+  overlay root: the presence emits `enterComplete` undeclared, a Vue dev
+  warning on reopen that declaring it cannot fix (the fragment root then
+  warns about an extraneous listener), so leave it; and `requestDismiss`
+  is declared but never wired to Zag, so it never fires. Its spec is an
+  `it.fails` tripwire beside a green test that the nested overlay closes
+  with its parent.
 - **Docs islands are `client:only="vue"`.** Astro drops `Teleport`
   output during SSR, so a hydrated overlay finds no content. The
   `document-component` page template has the details.

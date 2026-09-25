@@ -125,7 +125,10 @@ teleported content (T3 and up).
 - **Emits get a test each** where a flow triggers them (`escapeKeyDown`,
   `interactOutside`, `pointerDownOutside`, `focusOutside`,
   `exitComplete`). `check:props` counts props only, so nothing else
-  flags an untested emit.
+  flags an untested emit. `requestDismiss` needs a nested fixture: an
+  outer root on `v-model:open` whose content holds a second root; open
+  both, set the outer ref to `false`. Zag's layer stack then asks the
+  inner layer to dismiss.
 - **Unmount removes the teleport.** One test unmounts and asserts no
   `[data-scope]` node is left in `body`, so tests cannot bleed into each
   other. `vitest-browser-vue` cleans up after each test; the assertion
