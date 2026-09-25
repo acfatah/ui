@@ -18,8 +18,9 @@ Infrastructure items carry neither field and show `—`.
 | Component | Declared | Derived | Uses | Used by |
 | --- | --- | --- | --- | --- |
 | `vue/button` | T1 | T1 | — | — |
-| `vue/description` | T1 | T1 | — | `vue/switch` |
+| `vue/description` | T1 | T1 | — | `vue/popover`, `vue/switch` |
 | `vue/icons` | — | — | — | `vue/tags-input` |
 | `vue/label` | T1 | T1 | — | `vue/switch`, `vue/tags-input` |
+| `vue/popover` | T3 | T3 | `vue/description`, `vue/useForwardProps`, `vue/useForwardPropsEmits` | — |
 | `vue/switch` | T2 | T2 | `vue/description`, `vue/label`, `vue/useForwardProps`, `vue/useForwardPropsEmits` | — |
 | `vue/tags-input` | T4 | T2 | `vue/icons`, `vue/label`, `vue/useForwardProps`, `vue/useForwardPropsEmits` | — |

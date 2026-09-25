@@ -120,8 +120,10 @@ something to rewrite here: the fence must equal the file.
 
 ## Overlays (T3)
 
-Ark teleports overlay content to `<body>` on the client. The shipped pages
-are all T1, so no overlay island has been rendered on this site yet. The
-first T3 page must confirm in a browser that the island opens and its
-teleported content picks up the theme (`.dark` sits on `<html>`, so it
-should), and record the result in the docs app's `AGENT.md`.
+An overlay island renders `client:only="vue"`, not `client:load`. Ark
+teleports the content to `<body>`, and Astro's Vue renderer drops
+`Teleport` output during SSR, so a hydrated overlay finds no content and
+its trigger does nothing. `check:demos` accepts any `client:*`, so this
+is on the page author. `components/popover.mdx` is the shipped example;
+the docs app's `AGENT.md` records why, and the per-island id prefix that
+keeps two overlays on one page from sharing Ark ids.

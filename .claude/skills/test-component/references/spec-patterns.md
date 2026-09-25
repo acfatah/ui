@@ -4,7 +4,8 @@ Conventions for `<ComponentName>.spec.ts`, taken from the target's
 reference specs. Read the one for your tier beside this file. In
 `acfatah/ui`: `button/Button.spec.ts` for a single-element T1,
 `switch/Switch.spec.ts` for a multi-part T2 (composed fixture, state
-matrix, controlled `v-model`, toggle flow), and
+matrix, controlled `v-model`, toggle flow), `popover/Popover.spec.ts`
+for a T3 (teleported content, placement, dismissal, focus return), and
 `tags-input/TagsInput.spec.ts` for a T4 (collection rendered through
 `Context`, one `describe` per sub-flow, domain states, edge cases).
 
@@ -94,6 +95,45 @@ teleported content (T3 and up).
   class of the requested value is present, and the default value's own
   classes absent.
 
+## Portals (T3)
+
+`popover/Popover.spec.ts` is the pattern.
+
+- **Find teleported content through the document.** Name it by role
+  (`page.getByRole('dialog', { name })`) when asserting through
+  `expect.element`, and read attributes off
+  `document.querySelector('[data-scope=…][data-part=…]')`. Assert it is
+  *not* inside `screen.container`, and that its positioner's parent is
+  `document.body`: that is the teleport assertion T3 owes.
+- **Closed content is hidden, not absent.** Ark mounts it on the first
+  render unless `lazyMount` is set, so assert `hidden` or visibility,
+  not existence. `lazyMount` and `unmountOnExit` get a test each.
+- **Put a plain `Outside` button in the fixture**, before the root.
+  Clicking the page body lands wherever its centre is, which may be the
+  content; a named button outside the popover is deterministic, and it
+  doubles as a `finalFocusEl` or `persistentElements` target.
+- **Dismissal is one `it.each`** over Escape, an outside click and the
+  close trigger, each asserting the content is gone and the trigger's
+  `aria-expanded` is `false`. Focus return, `restoreFocus`,
+  `closeOnEscape` and `closeOnInteractOutside` get a test each.
+- **Placement asserts attributes**, never pixels: `data-side` and
+  `data-placement` on the content for each side.
+- **axe runs on the open content**, scoped to the positioner: plain,
+  `modal`, and named by `aria-label` with no title.
+- **`portalled` off keeps the content in place**: assert the positioner
+  is inside `screen.container`.
+- **Emits get a test each** where a flow triggers them (`escapeKeyDown`,
+  `interactOutside`, `pointerDownOutside`, `focusOutside`,
+  `exitComplete`). `check:props` counts props only, so nothing else
+  flags an untested emit. `requestDismiss` needs a nested fixture: an
+  outer root on `v-model:open` whose content holds a second root; open
+  both, set the outer ref to `false`. Zag's layer stack then asks the
+  inner layer to dismiss.
+- **Unmount removes the teleport.** One test unmounts and asserts no
+  `[data-scope]` node is left in `body`, so tests cannot bleed into each
+  other. `vitest-browser-vue` cleans up after each test; the assertion
+  proves it for the portal.
+
 ## Collections and typed input (T4)
 
 From the `tags-input` reference spec.
@@ -115,6 +155,27 @@ From the `tags-input` reference spec.
 - An input part rendered self-closing drops its child under `asChild`.
   Every Ark part keeps a `<slot />`, inputs included; the `asChild` spec
   is what catches a missing one.
+
+## Upstream defects
+
+For the `it.fails` case in `SKILL.md` step 3 only. `Popover.spec.ts` is
+the example: with `lazyMount`, Zag never labels the dialog by its title.
+
+- **Test the workaround, green.** The behaviour the docs page tells
+  consumers to use (`aria-label` on the content), asserted like any
+  other test, axe included.
+- **Keep the bug as an `it.fails` tripwire**, asserting the correct
+  behaviour. It passes while the bug exists and fails once an upgrade
+  fixes it; that failure is the prompt to drop the docs caveat and turn
+  it into a plain `it`.
+- **Make it fail for the bug, not for timing.** Wait for the state the
+  bug concerns first (the dialog visible), then assert with a short
+  bound (`expect.element(locator, { timeout: 1000 })`). Otherwise a
+  broken locator also "fails as expected", and the default wait costs
+  every run 15 seconds.
+- **Prove it can flip once**: temporarily change the fixture so the
+  correct behaviour holds (`lazyMount: false`), run it, and see
+  "Expect test to fail". Revert the probe.
 
 ## First run of a new component
 

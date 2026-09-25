@@ -56,6 +56,7 @@ export default defineConfig({
         // Vue and every test fails with "reading 'ce'".
         optimizeDeps: {
           include: [
+            '@ark-ui/vue/popover',
             '@ark-ui/vue/switch',
             '@ark-ui/vue/tags-input',
             'axe-core',

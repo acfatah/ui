@@ -78,9 +78,10 @@ component root because both repositories use them. Verify, don't assume.
 
 **Copy from the reference component for your tier** where the target has
 one (its `README.md` names them). In `acfatah/ui`: `button` for T1,
-`switch` for T2, `tags-input` for T4. A component wrapping a multi-part
-Ark machine follows `references/compound.md`, which explains what the T2
-reference does.
+`switch` for T2, `popover` for T3, `tags-input` for T4. A component
+wrapping a multi-part Ark machine follows `references/compound.md`,
+which explains what the T2 reference does and what the T3 reference
+adds.
 
 ## Directory structure
 

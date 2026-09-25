@@ -70,7 +70,7 @@ export default defineConfig({
     defaultStrategy: 'hover',
   },
   integrations: [
-    vue(),
+    vue({ appEntrypoint: '/src/vue-app' }),
     nimbus(nimbusConfig, {
       // Authoring rules are opt-in by design — your repo, your taste. The
       // two below are the load-bearing pair: frontmatter has to validate

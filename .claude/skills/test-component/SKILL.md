@@ -15,7 +15,8 @@ behaviour the component implements beyond that floor is specified too.
 
 A test that fails because the component is wrong stays **red**. This
 skill writes specs only; component source is never edited to make a test
-pass. The failure goes in the report as a defect.
+pass. The failure goes in the report as a defect. The one exception is a
+defect in a dependency, which nobody here can fix: see step 3.
 
 Read `references/tier-contract.md` in step 1 and
 `references/spec-patterns.md` before step 3.
@@ -90,7 +91,7 @@ with several parts, one spec per part that carries behaviour, same
 directory. Follow `references/spec-patterns.md`.
 
 Each assertion is written as the behaviour should be. When a test fails,
-decide which of three it is:
+decide which of four it is:
 
 - **The test is wrong** (wrong locator, missing await, unresolved
   transition): fix the test.
@@ -100,6 +101,17 @@ decide which of three it is:
 - **Nothing promises it either way** — the component does something odd
   that no source commits to: drop the assertion and put the observation
   in the report as a question for the author.
+- **A dependency is wrong** — the defect is in Ark or Zag, not in the
+  component's source. Only then, and only when all three hold, the test
+  becomes an `it.fails` tripwire instead of staying red:
+  - the defect is traced to the dependency's file, with the versions
+    checked;
+  - the consumer workaround is written on the component's docs page and
+    has its own green test;
+  - the `it.fails` comment names the upstream file and versions (and the
+    issue link once one is filed), and says what to do when it flips.
+  Missing any of them, the test stays red. The pattern is in
+  `references/spec-patterns.md`, "Upstream defects".
 
 Run the package formatter over the spec when it is written (`bun run
 format <spec>`); import order is the linter's, not this skill's. A failed
@@ -132,5 +144,7 @@ none fails for a reason in the test itself.
 - Props coverage result and every waiver with its reason.
 - Red tests: name, the behaviour it expects, the defect with
   `file:line`.
+- `it.fails` tripwires: name, the upstream defect with file and
+  versions, and the workaround test that covers consumers.
 - Questions: behaviour nothing promises, observed and left unasserted.
 - Tier mismatch from step 0, if any.
